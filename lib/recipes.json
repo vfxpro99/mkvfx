@@ -433,7 +433,9 @@
 				"make -j4"
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyIex/*.h $(MKVFX_ROOT)/include",
+				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyImath/*.h $(MKVFX_ROOT)/include"
 			]
 		},
 		{
