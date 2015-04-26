@@ -11,12 +11,21 @@
 			},
 			"notes": "PyIlmBase is not building yet, so PyAlembic is not building",
 			"recipe_osx": [
-				"cmake -DUSE_PYILMBASE=0 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=foo -DCMAKE_INSTALL_PREFIX=foo2 +",
+				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\")'$'\\n' +",
+				"$(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp",
+                "rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
+                "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
+				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\" -Wdeprecated-register)'$'\\n' +",
+				"$(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp",
+                "rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
+                "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
+				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=foo -DCMAKE_INSTALL_PREFIX=foo2 +",
 				"-DBOOST_INCLUDEDIR=$(MKVFX_ROOT)/include +",
 				"-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
 				"-DHDF5_ROOT=$(MKVFX_ROOT) +",
-				"-DALEMBIC_PYILMBASE_PYIMATH_LIB= +",
-				"-DILMBASE_ROOT=$(MKVFX_ROOT)",
+				"-DALEMBIC_PYILMBASE_PYIMATH_LIB=$(MKVFX_ROOT)/lib/libPyImath.dylib +",
+				"-DILMBASE_ROOT=$(MKVFX_ROOT) +",
+				"-DALEMBIC_PYILMBASE_ROOT=$(MKVFX_ROOT) ",
 				"make -j 4" 
 			],
 			"install_osx": [
@@ -449,7 +458,9 @@
 				"make -j4"
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyIex/*.h $(MKVFX_ROOT)/include",
+				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyImath/*.h $(MKVFX_ROOT)/include"
 			]
 		},
 		{

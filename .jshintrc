@@ -1,8 +1,10 @@
 {
   "curly": true,
-  "eqeqeq": true,
+  "eqeqeq": false,
   "immed": true,
   "latedef": "nofunc",
+  "loopfunc": true,
+  "funcscope": true,
   "newcap": true,
   "noarg": true,
   "sub": true,
