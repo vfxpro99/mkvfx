@@ -575,7 +575,7 @@
 				"make -j 4"
 			],
 			"install_osx": [
-				"cp $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/build/macos_intel64_clang_cc4.2.1_os10.10.1_release/*.dylib $(MKVFX_ROOT)/lib",
+				"cp $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/build/macos_intel64_*_release/*.dylib $(MKVFX_ROOT)/lib",
 				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/serial $(MKVFX_ROOT)/include/serial",
 				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/tbb $(MKVFX_ROOT)/include/tbb"
 			]
