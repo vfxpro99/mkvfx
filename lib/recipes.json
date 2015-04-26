@@ -71,6 +71,19 @@
 			"install_osx": []
 		},
 		{
+			"name": "bx",
+			"dir": "bx",
+			"build_in": "$(MKVFX_SRC_ROOT)/bx",
+			"repository": {
+				"type": "git",
+				"url": "git://github.com/bkaradzic/bx.git"
+			},
+			"recipe": [ "make" ],
+			"install_osx": [
+				"cp -R $(MKVFX_SRC_ROOT)/bx/include/bx $(MKVFX_ROOT)/include/bx"
+			]
+		},
+		{
 			"name": "c-blosc",
 			"dir": "c-blosc",
 			"build_in": "$(MKVFX_BUILD_ROOT)/c-blosc",
@@ -80,11 +93,14 @@
 			},
 			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/c-blosc",
-				"make -j 4",
-				"make -j 4" 
+				"make blosc_static -j 4",
+				"make blosc_shared -j 4"
 			],
 			"install_osx": [
-				"make install"
+				"cp $(MKVFX_BUILD_ROOT)/c-blosc/blosc/libblosc* $(MKVFX_ROOT)/lib",
+				"mkdir -p $(MKVFX_ROOT)/include/blosc",
+				"cp $(MKVFX_SRC_ROOT)/c-blosc/blosc/*.h $(MKVFX_ROOT)/include/blosc",
+				"cp $(MKVFX_BUILD_ROOT)/c-blosc/blosc/config.h $(MKVFX_ROOT)/include/blosc"
 			]
 		},
 		{
@@ -370,7 +386,7 @@
 			]
 		},
 		{
-			"name": "OpenVDB-WIP",
+			"name": "OpenVDB",
 			"dir": "OpenVDB",
 			"build_in": "$(MKVFX_ROOT)/OpenVDB",
 			"dependencies": ["c-blosc", "hdf5", "tbb", "boost", "IlmBase"],
@@ -450,6 +466,55 @@
 				"make -j4"
 			],
 			"install_osx": [
+				"make install"
+			]
+		},
+		{
+			"name": "qt",
+			"recipe": [
+			   "echo Please ensure Qt is installed in your installation root.",
+			   "echo It takes many many hours to build, and so qt4 and at5 not listed as",
+			   "dependencies in the projects they are needed."
+			]
+		},
+		{ 
+			"name": "qt4",
+			"notes": "http://www.linuxfromscratch.org/blfs/view/svn/x/qt4.html",
+			"dir": "qt4",
+			"build_in": "$(MKVFX_SRC_ROOT)/qt4/qt-everywhere-opensource-src-4.8.6",
+			"recipe_osx": [
+				"echo qt4 does not build on OSX 10.10 and greater"
+			],
+			"recipe": [
+				"./configure --prefix=$(MKVFX_ROOT) +",
+				" -confirm-license -opensource -release +",
+				" -nomake tests -nomake examples",
+				"make -j4"
+			],
+			"install_osx": [
+				"echo qt4 cannot be installed on OSX 10.10 and greater"
+			],
+			"install": [
+				"make install"
+			]
+		},
+		{
+			"name": "qt5",
+			"dir": "qt5",
+			"build_in": "$(MKVFX_SRC_ROOT)/qt5/qt-everywhere-opensource-src-5.4.0",
+			"repository": { 
+				"type": "curl-tgz",
+				"url": "http://download.qt-project.org/official_releases/qt/5.4/5.4.0/single/qt-everywhere-opensource-src-5.4.0.tar.gz"
+			},
+			"notes": "qt5 takes an unknown number of hours to complete building, so it is not listed as a dependency.",
+			"recipe": [
+				"./configure --prefix=$(MKVFX_ROOT) +",
+				" -confirm-license -opensource -release +",
+				" -no-framework",
+				" -nomake tests -nomake examples",
+				"make -j4"
+			],
+			"install": [
 				"make install"
 			]
 		},
