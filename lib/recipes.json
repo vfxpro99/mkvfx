@@ -12,20 +12,27 @@
 			"notes": "PyIlmBase is not building yet, so PyAlembic is not building",
 			"recipe_osx": [
 				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\")'$'\\n' +",
-				"$(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp",
+			    	"$(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp",
                 "rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
                 "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
+
 				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\" -Wdeprecated-register)'$'\\n' +",
-				"$(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp",
+					"$(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp",
                 "rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
                 "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
+
+				"sed '127i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-std=c++11\")'$'\\n' +",
+					"$(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/xxx.tmp",
+                "rm $(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt",
+                "mv $(MKVFX_SRC_ROOT)/Alembic/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt",
+
 				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=foo -DCMAKE_INSTALL_PREFIX=foo2 +",
-				"-DBOOST_INCLUDEDIR=$(MKVFX_ROOT)/include +",
-				"-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
-				"-DHDF5_ROOT=$(MKVFX_ROOT) +",
-				"-DALEMBIC_PYILMBASE_PYIMATH_LIB=$(MKVFX_ROOT)/lib/libPyImath.dylib +",
-				"-DILMBASE_ROOT=$(MKVFX_ROOT) +",
-				"-DALEMBIC_PYILMBASE_ROOT=$(MKVFX_ROOT) ",
+					"-DBOOST_INCLUDEDIR=$(MKVFX_ROOT)/include +",
+					"-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
+					"-DHDF5_ROOT=$(MKVFX_ROOT) +",
+					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=$(MKVFX_ROOT)/lib/libPyImath.dylib +",
+					"-DILMBASE_ROOT=$(MKVFX_ROOT) +",
+					"-DALEMBIC_PYILMBASE_ROOT=$(MKVFX_ROOT) ",
 				"make -j 4" 
 			],
 			"install_osx": [
@@ -418,7 +425,7 @@
 			"note": "numpy is required before the python integration can be activated",
 			"dir": "OpenVDB",
 			"build_in": "$(MKVFX_ROOT)/OpenVDB",
-			"dependencies": ["boost", "c-blosc", "glfw", "hdf5", "IlmBase", "python", "tbb"],
+			"dependencies": ["boost", "c-blosc", "glfw", "IlmBase", "python", "tbb"],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/dreamworksanimation/openvdb.git"
