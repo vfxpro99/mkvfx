@@ -78,6 +78,7 @@ You should see a message like -
  assimp
  boost
  boost-build-club
+ bx
  c-blosc
  glew
  glfw
@@ -94,11 +95,14 @@ You should see a message like -
  OpenImageIO
  OpenShadingLanguage-WIP
  OpenSubdiv
- OpenVDB-WIP
+ OpenVDB
  partio
  ptex
  PyIlmBase
  python
+ qt
+ qt4
+ qt5
  sqlite
  stb
  tbb
