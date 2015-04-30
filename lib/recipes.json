@@ -46,7 +46,8 @@
 				"make -j 4" 
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libassimp.dylib $(MKVFX_ROOT)/bin/libassimp.dylib"
 			]
 		},
 		{
@@ -109,7 +110,8 @@
 				"cp $(MKVFX_BUILD_ROOT)/c-blosc/blosc/libblosc* $(MKVFX_ROOT)/lib",
 				"mkdir -p $(MKVFX_ROOT)/include/blosc",
 				"cp $(MKVFX_SRC_ROOT)/c-blosc/blosc/*.h $(MKVFX_ROOT)/include/blosc",
-				"cp $(MKVFX_BUILD_ROOT)/c-blosc/blosc/config.h $(MKVFX_ROOT)/include/blosc"
+				"cp $(MKVFX_BUILD_ROOT)/c-blosc/blosc/config.h $(MKVFX_ROOT)/include/blosc",
+				"ln -s -f $(MKVFX_ROOT)/lib/libblosc.dylib $(MKVFX_ROOT)/bin/libblosc.dylib"
 			]
 		},
 		{
@@ -125,7 +127,8 @@
 				"make -C $(MKVFX_SRC_ROOT)/glew all"
 			],
 			"install_osx": [
-				"make -C $(MKVFX_SRC_ROOT)/glew GLEW_DEST='$(MKVFX_ROOT)' install"
+				"make -C $(MKVFX_SRC_ROOT)/glew GLEW_DEST='$(MKVFX_ROOT)' install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libGLEW.dylib $(MKVFX_ROOT)/bin/libGLEW.dylib"
 			]
 		},
 		{
@@ -135,14 +138,15 @@
 			"build_in": "$(MKVFX_BUILD_ROOT)/glfw",
 			"repository": {
 				"type": "git",
-				"url": "git://github.com/glfw/glfw.git"
+				"url": "https://github.com/glfw/glfw.git"
 			},
 			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) -DGLFW_USE_MENUBAR=1 $(MKVFX_SRC_ROOT)/glfw",
 				"make -j 4" 
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libglfw3.a $(MKVFX_ROOT)/lib/libglfw.a"
 			]
 		},
 		{
@@ -199,7 +203,13 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmThread-2_2.dylib $(MKVFX_ROOT)/lib/libIlmThread.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmThread-2_2.la $(MKVFX_ROOT)/lib/libIlmThread.la",
 				"ln -s -f $(MKVFX_ROOT)/lib/libImath-2_2.dylib $(MKVFX_ROOT)/lib/libImath.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libImath-2_2.la $(MKVFX_ROOT)/lib/libImath.la"
+				"ln -s -f $(MKVFX_ROOT)/lib/libImath-2_2.la $(MKVFX_ROOT)/lib/libImath.la",
+
+				"ln -s -f $(MKVFX_ROOT)/lib/libIlmThread.dylib $(MKVFX_ROOT)/bin/libIlmThread.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libHalf.dylib $(MKVFX_ROOT)/bin/libHalf.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libIex.dylib $(MKVFX_ROOT)/bin/libIex.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libImath.dylib $(MKVFX_ROOT)/bin/libImath.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath.dylib $(MKVFX_ROOT)/bin/libIexMath.dylib"
 			]
 		},
 		{
@@ -212,7 +222,7 @@
 			},
 			"recipe_osx": [
 				"./configure --prefix=$(MKVFX_ROOT)",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install",
@@ -232,7 +242,8 @@
 				"./configure --prefix=$(MKVFX_ROOT)"
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libpng.dylib $(MKVFX_ROOT)/bin/libpng.dylib"
 			]
 		},
 		{
@@ -246,10 +257,11 @@
 			},
 			"recipe_osx": [
 				"./configure --prefix=$(MKVFX_ROOT) --enable-cxx=0",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libtiff.dylib $(MKVFX_ROOT)/bin/libtiff.dylib"
 			]
 		},
 		{
@@ -265,7 +277,7 @@
 			"recipe_osx": [
 				"cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=\"X86\" -DLLVM_REQUIRES_RTTI=ON +",
 				" -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/llvm",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install"
@@ -302,10 +314,11 @@
 			},
 			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenColorIO",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libOpenColorIO.dylib $(MKVFX_ROOT)/bin/libOpenColorIO.dylib"
 			]
 		},
 		{
@@ -325,7 +338,9 @@
 			"install_osx": [
 				"make install",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImf.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImfUtil-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImfUtil.dylib"
+				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImfUtil-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImfUtil.dylib",
+
+				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf.dylib $(MKVFX_ROOT)/bin/libIlmImf.dylib"
 			]
 		},
 		{
@@ -346,10 +361,12 @@
 				"-DOPENEXR_ILMIMF_LIBRARIES=$(MKVFX_ROOT)/lib +",
 				"-DOCIO_PATH=$(MKVFX_ROOT) +",
 				"..",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libOpenImageIO.dylib $(MKVFX_ROOT)/bin/libOpenImageIO.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libOpenImageIO_Util.dylib $(MKVFX_ROOT)/bin/libOpenImageIO_Util.dylib"
 			]
 		},
 		{
@@ -388,24 +405,89 @@
 			},
 			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) -DGLEW_LOCATION=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenSubdiv",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+				"ln -s -f $(MKVFX_ROOT)/lib/libosdCPU.dylib $(MKVFX_ROOT)/bin/libosdCPU.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libosdGPU.dylib $(MKVFX_ROOT)/bin/libosdGPU.dylib"
 			]
 		},
 		{
 			"name": "OpenVDB",
+			"note": "numpy is required before the python integration can be activated",
 			"dir": "OpenVDB",
 			"build_in": "$(MKVFX_ROOT)/OpenVDB",
-			"dependencies": ["c-blosc", "hdf5", "tbb", "boost", "IlmBase"],
+			"dependencies": ["boost", "c-blosc", "glfw", "hdf5", "IlmBase", "python", "tbb"],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/dreamworksanimation/openvdb.git"
 			},
 			"recipe_osx": [
+			    "SEARCH=\"LOG4CPLUS_INCL_DIR := \\/rel\\/folio\\/log4cplus\\/log4cplus-1.0.3-latest\\/sys_include\"; +", 
+			    "REPLACE=\"LOG4CPLUS_INCL_DIR :=\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"PYTHON_VERSION := 2.6\"; +", 
+			    "REPLACE=\"PYTHON_VERSION := 2.7\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"\\$(HFS)\\/python\\/include\"; +", 
+			    "REPLACE=\"\\$(HT)\\/include\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"has_python := yes\"; +", 
+			    "REPLACE=\"has_python := no\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"CPPUNIT_INCL_DIR := \\/rel\\/map\\/generic-2013.22\\/sys_include\"; +", 
+			    "REPLACE=\"CPPUNIT_INCL_DIR := \"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"CONCURRENT_MALLOC_LIB := -ljemalloc\"; +", 
+			    "REPLACE=\"CONCURRENT_MALLOC_LIB := \"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/include\"; +", 
+			    "REPLACE=\"\\$(HT)\\/include\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/lib\"; +", 
+			    "REPLACE=\"\\$(HDSO)\\/lib\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"-framework Cocoa -framework OpenGL\"; +", 
+			    "REPLACE=\"-framework Cocoa -framework CoreVideo -framework OpenGL\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"DOXYGEN := doxygen\"; +", 
+			    "REPLACE=\"DOXYGEN := \"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+			    "SEARCH=\"DESTDIR := \\/tmp\\/OpenVDB\"; +", 
+			    "REPLACE=\"DESTDIR := \\$(HT)\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
+
+				"make -C $(MKVFX_SRC_ROOT)/OpenVDB/openvdb -j 4 HT=$(MKVFX_ROOT) HDSO=$(MKVFX_ROOT) +",
+				"  EXR_LIB_DIR=$(MKVFX_ROOT)/lib",
+				"make -C $(MKVFX_SRC_ROOT)/OpenVDB/openvdb vdb_view -j 4 HT=$(MKVFX_ROOT) HDSO=$(MKVFX_ROOT) +",
+				"  EXR_LIB_DIR=$(MKVFX_ROOT)/lib"
 			],
 			"install_osx": [
+				"make -C $(MKVFX_SRC_ROOT)/OpenVDB/openvdb install HT=$(MKVFX_ROOT) HDSO=$(MKVFX_ROOT) +",
+				   "  EXR_LIB_DIR=$(MKVFX_ROOT)/lib",
+				 "ln -s -f $(MKVFX_ROOT)/lib/libopenvdb.dylib $(MKVFX_ROOT)/bin/libopenvdb.dylib"
 			]
 		},
 		{
@@ -420,7 +502,7 @@
 			"recipe_osx": [
 				"mkdir -p $(MKVFX_SRC_ROOT)/partio/src/doc/html",
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/partio",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install"
@@ -455,7 +537,7 @@
                 "rm $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
                 "mv $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
 				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install",
@@ -474,7 +556,7 @@
 			},
 			"recipe_osx": [
 				"./configure --prefix=$(MKVFX_ROOT)",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install"
@@ -500,7 +582,7 @@
 				"./configure --prefix=$(MKVFX_ROOT) +",
 				" -confirm-license -opensource -release +",
 				" -nomake tests -nomake examples",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
 				"echo qt4 cannot be installed on OSX 10.10 and greater"
@@ -523,7 +605,7 @@
 				" -confirm-license -opensource -release +",
 				" -no-framework",
 				" -nomake tests -nomake examples",
-				"make -j4"
+				"make -j 4"
 			],
 			"install": [
 				"make install"
@@ -542,7 +624,7 @@
 			],
 			"recipe_linux": [
 				"./configure --prefix=$(MKVFX_ROOT)",
-				"make -j4"
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install"
@@ -577,7 +659,11 @@
 			"install_osx": [
 				"cp $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/build/macos_intel64_*_release/*.dylib $(MKVFX_ROOT)/lib",
 				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/serial $(MKVFX_ROOT)/include/serial",
-				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/tbb $(MKVFX_ROOT)/include/tbb"
+				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/tbb $(MKVFX_ROOT)/include/tbb",
+
+				"ln -s -f $(MKVFX_ROOT)/lib/libtbb.dylib $(MKVFX_ROOT)/bin/libtbb.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc.dylib $(MKVFX_ROOT)/bin/libtbbmalloc.dylib",
+				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc_proxy.dylib $(MKVFX_ROOT)/bin/libtbbmalloc_proxy.dylib"
 			]
 		}
 	]

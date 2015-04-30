@@ -39,6 +39,22 @@ a little sugar in the recipes file for configurations could allow for
 doing a build that conforms to something specific such as vfxplatform.com's
 "Current - VFX Platform CY2015".
 
+## Runtime
+
+The OSX SDK contains some conflicting libraries, such as libpng. Traditionally,
+one sets the DYLD_LIBRARY_PATH environment variable to point at your own runtime
+environment. This will cause OSX system frameworks to fail though, because OSX
+will prefer the mkvfx version of those libraries instead of the SDK versions, and
+then frameworks like ImageIO won't load. It's best therefore to leave the
+environment undisturbed, and instead contrive that your runtime has another way
+to find the dynamic libraries.
+
+mkvfx installs symlinks to the runtime libraries in the local bin folder so that
+tools and utilities in the local bin can run properly without the need to modify
+the global runtime environment. You can do the same, install your applications into
+bin, or, you can install the necessary dylibs into your own build directory, or
+you can invoke link magic to tell the loader where to look, or you can prefer
+static versions of the libraries, if they can be built that way.
 
 ## Installation
 
