@@ -26,7 +26,7 @@
                 "rm $(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt",
                 "mv $(MKVFX_SRC_ROOT)/Alembic/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt",
 
-				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=foo -DCMAKE_INSTALL_PREFIX=foo2 +",
+				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/alembic-stage -DCMAKE_INSTALL_PREFIX=/tmp +",
 					"-DBOOST_INCLUDEDIR=$(MKVFX_ROOT)/include +",
 					"-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
 					"-DHDF5_ROOT=$(MKVFX_ROOT) +",
@@ -36,7 +36,9 @@
 				"make -j 4" 
 			],
 			"install_osx": [
-				"make install"
+				"make install",
+                "cp -R /tmp/alembic-1.5.8/include $(MKVFX_ROOT)",
+                "cp -R /tmp/alembic-1.5.8/lib $(MKVFX_ROOT)"
 			]
 		},
 		{
@@ -180,7 +182,7 @@
 				"url": "git://github.com/meshula/hdf5.git"
 			},
 			"recipe_osx": [
-				"cmake -DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=build -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/hdf5",
+				"cmake -DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/hdf5",
 				"make -j 4",
 				"make -j 4" 
 			],
@@ -363,11 +365,11 @@
 			"recipe_osx": [
 				"mkdir -p build",
 				"cd build;cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
-				"-DCMAKE_CXX_COMPILER_WORKS=1 +",
-				"-DOPENEXR_INCLUDE_DIR=$(MKVFX_ROOT)/include +",
-				"-DOPENEXR_ILMIMF_LIBRARIES=$(MKVFX_ROOT)/lib +",
-				"-DOCIO_PATH=$(MKVFX_ROOT) +",
-				"..",
+					"-DCMAKE_CXX_COMPILER_WORKS=1 +",
+					"-DOPENEXR_INCLUDE_DIR=$(MKVFX_ROOT)/include +",
+					"-DOPENEXR_ILMIMF_LIBRARIES=$(MKVFX_ROOT)/lib +",
+					"-DOCIO_PATH=$(MKVFX_ROOT) +",
+					"..",
 				"make -j 4"
 			],
 			"install_osx": [
@@ -390,11 +392,11 @@
 				"mkdir -p build",
 				"cd build; +",
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
-				" -DTHIRD_PARTY_TOOLS_HOME=$(MKVFX_ROOT) +",
-				" -DLLVM_CONFIG=$(MKVFX_ROOT)/bin/llvm-config -DLLVM_STATIC=1 +",
-				" -DILMBASE_HOME=$(MKVFX_ROOT)/include +",
-				" -DUSE_CPP11=1 -DUSE_LIBCPLUSPLUS=1 +",
-				" ..",
+					" -DTHIRD_PARTY_TOOLS_HOME=$(MKVFX_ROOT) +",
+					" -DLLVM_CONFIG=$(MKVFX_ROOT)/bin/llvm-config -DLLVM_STATIC=1 +",
+					" -DILMBASE_HOME=$(MKVFX_ROOT)/include +",
+					" -DUSE_CPP11=1 -DUSE_LIBCPLUSPLUS=1 +",
+					" ..",
 				"cd build;make -j 4"
 			],
 			"install_osx": [
