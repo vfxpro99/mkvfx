@@ -9,7 +9,6 @@
 				"type": "git",
 				"url": "git://github.com/alembic/alembic.git"
 			},
-			"notes": "PyIlmBase is not building yet, so PyAlembic is not building",
 			"recipe_osx": [
 				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\")'$'\\n' +",
 			    	"$(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp",
