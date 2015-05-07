@@ -74,11 +74,6 @@
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/bgfx/src/config.h > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/bgfx/src/config.h",
 
-			    "SEARCH=\"gl\\/glext.h\"; +", 
-			    "REPLACE=\"OpenGL\\/glext.h\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/bgfx/src/renderer_gl.h > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/bgfx/src/renderer_gl.h",
-
 				"gcc -isystem $(MKVFX_ROOT)/include +",
                     "-isystem $(MKVFX_SRC_ROOT)/bx/include/compat/osx +",
 				    "-I $(MKVFX_SRC_ROOT)/bgfx/include +",
