@@ -59,6 +59,43 @@
 			]
 		},
 		{
+			"name": "bgfx",
+			"dir": "bgfx",
+			"dependencies": ["bx"],
+			"build_in": "/tmp/bgfx",
+			"repository": {
+				"type": "git",
+				"url": "git://github.com/bkaradzic/bgfx.git"
+			},
+			"recipe_osx": [
+
+			    "SEARCH=\"BGFX_CONFIG_USE_TINYSTL 1\"; +", 
+			    "REPLACE=\"BGFX_CONFIG_USE_TINYSTL 0\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/bgfx/src/config.h > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/bgfx/src/config.h",
+
+			    "SEARCH=\"gl\\/glext.h\"; +", 
+			    "REPLACE=\"OpenGL\\/glext.h\"; +",
+			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/bgfx/src/renderer_gl.h > tmp.txt; +",
+			    "mv tmp.txt $(MKVFX_SRC_ROOT)/bgfx/src/renderer_gl.h",
+
+				"gcc -isystem $(MKVFX_ROOT)/include +",
+                    "-isystem $(MKVFX_SRC_ROOT)/bx/include/compat/osx +",
+				    "-I $(MKVFX_SRC_ROOT)/bgfx/include +",
+				    "-isystem $(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos +",
+				    "-DBGFX_CONFIG_RENDERER_OPENGL=41 +",
+				    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
+				    "-c -fPIC $(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp",
+				"ar rs libbgfx.a amalgamated.o"
+			],
+			"install_osx": [
+				"cp /tmp/bgfx/libbgfx.a $(MKVFX_ROOT)/lib",
+				"cp -R $(MKVFX_SRC_ROOT)/bgfx/include $(MKVFX_ROOT)/include",
+				"echo bgfx built with -DBGFX_CONFIG_RENDERER_OPENGL=41 +",
+				    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS"
+			]
+		},
+		{
 			"name": "boost",
 			"dir": "boost",
 			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_57_0",
@@ -68,7 +105,6 @@
 				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_57_0.tar.gz"
 			},
 			"recipe_osx": [
-				"echo $(MKVFX_SRC_ROOT)",
 				"cp $(MKVFX_SRC_ROOT)/boost-build-club/* $(MKVFX_SRC_ROOT)/boost/boost_1_57_0",
 				"chmod 744 build-OSX.sh;./build-OSX.sh"
 			],
