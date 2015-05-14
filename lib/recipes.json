@@ -49,13 +49,13 @@
 				"url": "git://github.com/assimp/assimp.git"
 			},
 			"recipe_osx": [ 
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/assimp",
-				"make -j 4",
+				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
+				       "-DBUILD_SHARED_LIBS=OFF +",
+                       "$(MKVFX_SRC_ROOT)/assimp",
 				"make -j 4" 
 			],
 			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libassimp.dylib $(MKVFX_ROOT)/bin/libassimp.dylib"
+				"make install"
 			]
 		},
 		{
@@ -191,7 +191,7 @@
 		{
 			"name": "glm",
 			"dir": "glm",
-			"build_in": "$(MKVFX_BUILD_ROOT)/glm",
+			"build_in": "/tmp/glm",
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/g-truc/glm.git"
@@ -249,6 +249,30 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libIex.dylib $(MKVFX_ROOT)/bin/libIex.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libImath.dylib $(MKVFX_ROOT)/bin/libImath.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath.dylib $(MKVFX_ROOT)/bin/libIexMath.dylib"
+			]
+		},
+		{
+			"name": "LabText",
+			"dir": "LabText",
+			"build_in": "/tmp/LabText",
+			"repository": {
+				"type": "git",
+				"url": "git://github.com/meshula/LabText.git"
+			},
+			"recipe_osx": [
+				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/dict.cpp",
+				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/Dictionary.cpp",
+				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/ftoa.cpp",
+				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/itoa.cpp",
+				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/TextScanner.cpp",
+				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/TextScannerLib.cpp",
+				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/zmalloc.cpp",
+				"ar rs libLabText.a Dictionary.o TextScanner.o TextScannerLib.o dict.o ftoa.o itoa.o zmalloc.o"
+			],
+			"install_osx": [
+				"cp /tmp/LabText/libLabText.a $(MKVFX_ROOT)/lib",
+				"mkdir -p $(MKVFX_ROOT)/include/LabText",
+				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.h $(MKVFX_ROOT)/include/LabText"
 			]
 		},
 		{
@@ -333,10 +357,10 @@
 			"recipe_osx": [
 				"cp $(MKVFX_SRC_ROOT)/stb/stb_image.h $(MKVFX_SRC_ROOT)/nanovg/src/stb_image.h",
 				"gcc -c -fPIC $(MKVFX_SRC_ROOT)/nanovg/src/nanovg.c",
-				"ar rs nanovg.a nanovg.o"
+				"ar rs libnanovg.a nanovg.o"
 			],
 			"install_osx": [
-				"cp $(MKVFX_BUILD_ROOT)/nanovg/nanovg.a $(MKVFX_ROOT)/lib",
+				"cp $(MKVFX_BUILD_ROOT)/nanovg/libnanovg.a $(MKVFX_ROOT)/lib",
 				"cp $(MKVFX_SRC_ROOT)/nanovg/src/*.h $(MKVFX_ROOT)/include",
 				"cp $(MKVFX_SRC_ROOT)/nanovg/example/stb_image_write.h $(MKVFX_ROOT)/include"
 			]
