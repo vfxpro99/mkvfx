@@ -20,11 +20,6 @@
                 "rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
                 "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
 
-				"sed '127i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-std=c++11\")'$'\\n' +",
-					"$(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/xxx.tmp",
-                "rm $(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt",
-                "mv $(MKVFX_SRC_ROOT)/Alembic/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/CMakeLists.txt",
-
 				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/alembic-stage -DCMAKE_INSTALL_PREFIX=/tmp +",
 					"-DBOOST_INCLUDEDIR=$(MKVFX_ROOT)/include +",
 					"-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
