@@ -474,7 +474,7 @@
 		{
 			"name": "OpenSubdiv",
 			"dir": "OpenSubdiv",
-			"build_in": "$(MKVFX_ROOT)/OpenSubdiv",
+			"build_in": "/tmp/OpenSubdiv",
 			"dependencies": ["glew", "glfw", "IlmBase", "ptex"],
 			"repository": {
 				"type": "git",
