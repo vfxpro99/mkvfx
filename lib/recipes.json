@@ -54,6 +54,23 @@
 			]
 		},
 		{
+			"name": "autoconf",
+			"dir": "autoconf",
+			"build_in": "$(MKVFX_SRC_ROOT)/autoconf/autoconf-2.64",
+			"repository": {
+				"type": "curl-tgz",
+				"url": "http://ftpmirror.gnu.org/autoconf/autoconf-2.64.tar.gz"
+			},
+			"recipe": [
+				"pwd",
+				"./configure --prefix=/usr/local",
+				"make -j 4"
+			],
+			"install_osx": [
+				"sudo make install"
+			]
+		},
+		{
 			"name": "bgfx",
 			"dir": "bgfx",
 			"dependencies": ["bx"],
@@ -289,6 +306,7 @@
 		},
 		{
 			"name": "libpng",
+			"notes": "libpng builds static on OSX to avoid conflict with CoreImage",
 			"dir": "libpng",
 			"build_in": "$(MKVFX_SRC_ROOT)/libpng",
 			"repository": {
@@ -296,12 +314,13 @@
 				"url": "git://github.com/glennrp/libpng.git"
 			},
 			"recipe_osx": [
-				"autoreconf -fiv",
-				"./configure --prefix=$(MKVFX_ROOT)"
+				"cmake -DBUILDSTATIC=1 -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/libpng",
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libpng.dylib $(MKVFX_ROOT)/bin/libpng.dylib"
+				"echo removing libpng dylibs because of fatal CoreImage conflicts, this forcing static libpng linkage",
+				"rm $(MKVFX_ROOT)/lib/libpng*.dylib"
 			]
 		},
 		{
