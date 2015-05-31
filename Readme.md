@@ -74,38 +74,43 @@ You should see a message like -
 
 ```
  mkvfx knows how to build:
- Alembic
- assimp
- boost
- boost-build-club
- bx
- c-blosc
- glew
- glfw
- glm
- hdf5
- IlmBase
- libjpeg
- libpng
- libtiff
- llvm
- nanovg
- OpenColorIO
- OpenEXR
- OpenImageIO
- OpenShadingLanguage-WIP
- OpenSubdiv
- OpenVDB
- partio
- ptex
- PyIlmBase
- python
- qt
- qt4
- qt5
- sqlite
- stb
- tbb
+Alembic
+assimp
+autoconf
+bgfx
+boost
+boost-build-club
+bullet
+bx
+c-blosc
+glew
+glfw
+glm
+hdf5
+IlmBase
+LabText
+libjpeg
+libpng
+libtiff
+llvm
+nanovg
+OpenColorIO
+OpenEXR
+OpenImageIO
+OpenShadingLanguage-WIP
+OpenSubdiv
+OpenVDB
+partio
+ptex
+PyIlmBase
+python
+qt
+qt4
+qt5
+sqlite
+stb
+tbb
+
 
  mkvfx [options] [packages]
  --help           this message
