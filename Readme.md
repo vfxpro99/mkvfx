@@ -88,6 +88,7 @@ glfw
 glm
 hdf5
 IlmBase
+jsoncpp
 LabText
 libjpeg
 libpng
