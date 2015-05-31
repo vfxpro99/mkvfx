@@ -132,6 +132,48 @@
 			"install_osx": []
 		},
 		{
+			"name": "bullet",
+			"dir": "bullet",
+			"build_in": "$(MKVFX_SRC_ROOT)/bullet/build3",
+			"repository": {
+				"type": "git",
+				"url": "https://github.com/bulletphysics/bullet3.git"
+			},
+			"recipe_osx": [ 
+				"./premake4_osx gmake",
+				"cd gmake; make" 
+			],
+			"install_osx": [
+				"cp $(MKVFX_SRC_ROOT)/bullet/bin/libBullet3Dynamics_gmake.a $(MKVFX_ROOT)/lib/libBullet3Dynamics.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/bin/libBullet3Geometry_gmake.a $(MKVFX_ROOT)/lib/libBullet3Geometry.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/bin/libBulletCollision_gmake.a $(MKVFX_ROOT)/lib/libBulletCollision.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/bin/libBullet3Collision_gmake.a $(MKVFX_ROOT)/lib/libBullet3Collision.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/bin/libBullet3Common_gmake.a $(MKVFX_ROOT)/lib/libBullet3Common.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/bin/libLinearMath_gmake.a $(MKVFX_ROOT)/lib/libLinearMath.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/lib/libBullet2FileLoader_gmake.a $(MKVFX_ROOT)/lib/libBullet2FileLoader.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/lib/libBullet3OpenCL_clew_gmake.a $(MKVFX_ROOT)/lib/libBullet3OpenCL_clew.a",
+				"cp $(MKVFX_SRC_ROOT)/bullet/lib/libBulletSoftBody_gmake.a $(MKVFX_ROOT)/lib/libBulletSoftBody.a",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletCollision",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletCollision/BroadphaseCollision",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletCollision/CollisionDispatch",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletCollision/CollisionShapes",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletDynamics",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletDynamics/Dynamics",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletDynamics/Dynamics/ConstraintSolver",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/BulletDynamics/Vehicle",
+				"mkdir -p $(MKVFX_ROOT)/include/bullet/LinearMath",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/*.h $(MKVFX_ROOT)/include/bullet/",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/BulletCollision/BroadphaseCollision/*.h $(MKVFX_ROOT)/include/bullet/BulletCollision/BroadphaseCollision",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/BulletCollision/CollisionDispatch/*.h $(MKVFX_ROOT)/include/bullet/BulletCollision/CollisionDispatch",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/BulletCollision/CollisionShapes/*.h $(MKVFX_ROOT)/include/bullet/BulletCollision/CollisionShapes",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/BulletDynamics/Dynamics/*.h $(MKVFX_ROOT)/include/bullet/BulletDynamics/Dynamics",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/BulletDynamics/ConstraintSolver/*.h  $(MKVFX_ROOT)/include/bullet/BulletDynamics/Dynamics/ConstraintSolver",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/BulletDynamics/Vehicle/*.h $(MKVFX_ROOT)/include/bullet/BulletDynamics/Vehicle",
+				"cp $(MKVFX_SRC_ROOT)/bullet/src/LinearMath/*.h $(MKVFX_ROOT)/include/bullet/LinearMath"
+			]
+		},
+		{
 			"name": "bx",
 			"dir": "bx",
 			"build_in": "$(MKVFX_SRC_ROOT)/bx",
