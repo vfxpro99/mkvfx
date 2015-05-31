@@ -250,10 +250,11 @@
 				"type": "git",
 				"url": "git://github.com/g-truc/glm.git"
 			},
-			"recipe": [],
-			"install_osx": [
+			"recipe": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/glm",
-				"make -j 4",
+				"make -j 4"
+			],
+			"install_osx": [
 				"make install"
 			]
 		},
@@ -303,6 +304,22 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libIex.dylib $(MKVFX_ROOT)/bin/libIex.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libImath.dylib $(MKVFX_ROOT)/bin/libImath.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath.dylib $(MKVFX_ROOT)/bin/libIexMath.dylib"
+			]
+		},
+		{
+			"name": "jsoncpp",
+			"dir": "jsoncpp",
+			"build_in": "/tmp/jsoncpp",
+			"repository": {
+				"type": "git",
+				"url": "https://github.com/open-source-parsers/jsoncpp.git"
+			},
+			"recipe": [
+				"cmake -DCMAKE_BUILD_TYPE=release -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/jsoncpp",
+				"make -j 4"
+			],
+			"install_osx": [
+				"make install"
 			]
 		},
 		{
