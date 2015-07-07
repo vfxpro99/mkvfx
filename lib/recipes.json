@@ -343,7 +343,8 @@
 			"install_osx": [
 				"cp /tmp/LabText/libLabText.a $(MKVFX_ROOT)/lib",
 				"mkdir -p $(MKVFX_ROOT)/include/LabText",
-				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.h $(MKVFX_ROOT)/include/LabText"
+				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.h $(MKVFX_ROOT)/include/LabText",
+				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.hpp $(MKVFX_ROOT)/include/LabText"
 			]
 		},
 		{
