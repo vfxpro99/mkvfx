@@ -13,7 +13,7 @@ local. If local doesn't exist, it will make one. If you run in /usr, it
 will populate /usr/local/lib, /usr/local/include, /usr/local/bin, and so on.
 
 The more interesting thing it will do is populate minimal local dependencies.
-If you are making a project that needs only OpenSubdiv, running 
+If you are making a project that needs only OpenSubdiv, running
 
 ```sh
  mkvfx OpenSubdiv
@@ -33,7 +33,7 @@ will add the bits that were not already there for OpenSubdiv.
 At the moment there are only recipes for OSX, but a small amount of patch
 will allow building on other platforms. Pull requests welcome of course.
 
-It would be nice if the script also know about configurations. At the 
+It would be nice if the script also knows about configurations. At the
 moment, it pulls top of tree of a specific branch (by default master), but
 a little sugar in the recipes file for configurations could allow for
 doing a build that conforms to something specific such as vfxplatform.com's
@@ -58,15 +58,49 @@ static versions of the libraries, if they can be built that way.
 
 ## Installation
 
-Install node, minimally 0.11.14, using nvm. You'll also get npm with it.
+# Prerequisites
 
-Install grunt using
+On OSX, mkvfx expects to run in a bash or zsh environment.
+
+On Windows, mkvfx expects to run in a Visual Studio command prompt.
+
+node.js, minimally 0.11.14. Installation using nvm is a straightforward way
+to do it. You'll also get npm with it.
+
+npm, installed as a side effect of installing node.js
+
+grunt, install globally using npm
+
+Python, grunt requires Python 2.7.x to run, so make sure Python is installed and
+available from the command line.
+
+On Windows, make sure that both node and python can be invoked from the
+Visual Studio command prompt. The Python installer doesn't modify the PATH
+variable, so do that in the environment settings panel.
 
 ```sh
  npm install -g grunt-cli
 ```
 
-clone this repo. Run grunt in the root directory.
+# mkvfx itself
+
+clone this repo. Install the dependencies using npm.
+
+```sh
+ npm install
+```
+
+on Windows, if using VS2015 use this instead:
+
+```sh
+ npm install --msvs_version=2015
+```
+
+ Run grunt in the root directory.
+
+ ```sh
+  grunt
+```
 
 Now type mkvfx, and all will be revealed.
 
@@ -132,5 +166,5 @@ tbb
 
 
 ### License
-Copyright (c) 2014 Nick Porcino  
+Copyright (c) 2014 Nick Porcino
 Licensed under the MIT license.
