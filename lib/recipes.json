@@ -75,12 +75,12 @@
 			"dir": "bgfx",
 			"dependencies": ["bx"],
 			"build_in": "/tmp/bgfx",
+			"build_in_windows": "$(MKVFX_SRC_ROOT)/bgfx",
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/bkaradzic/bgfx.git"
 			},
 			"recipe_osx": [
-
 			    "SEARCH=\"BGFX_CONFIG_USE_TINYSTL 1\"; +",
 			    "REPLACE=\"BGFX_CONFIG_USE_TINYSTL 0\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/bgfx/src/config.h > tmp.txt; +",
@@ -100,7 +100,12 @@
 				"cp -R $(MKVFX_SRC_ROOT)/bgfx/include $(MKVFX_ROOT)/include",
 				"echo bgfx built with -DBGFX_CONFIG_RENDERER_OPENGL=41 +",
 				    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS"
-			]
+			],
+			"recipe_windows": [
+				"\"$(MKVFX_SRC_ROOT)/bx/tools/bin/windows/genie.exe\" vs2015",
+				"msbuild \"$(MKVFX_SRC_ROOT)\\bgfx\\.build\\projects\\vs2015\\bgfx.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+			],
+			"install": []
 		},
 		{
 			"name": "boost",
@@ -188,7 +193,8 @@
 			"recipe_windows": [
 				"\"$(MKVFX_SRC_ROOT)/bx/tools/bin/windows/genie.exe\" vs2015",
 				"msbuild \"$(MKVFX_SRC_ROOT)\\bx\\.build\\projects\\vs2015\\bx.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
-			]
+			],
+			"install": []
 		},
 		{
 			"name": "c-blosc",
