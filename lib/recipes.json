@@ -1,5 +1,5 @@
 {
-	"packages": [ 
+	"packages": [
 		{
 			"name": "Alembic",
 			"dir": "Alembic",
@@ -27,7 +27,7 @@
 					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=$(MKVFX_ROOT)/lib/libPyImath.dylib +",
 					"-DILMBASE_ROOT=$(MKVFX_ROOT) +",
 					"-DALEMBIC_PYILMBASE_ROOT=$(MKVFX_ROOT) ",
-				"make -j 4" 
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install",
@@ -43,11 +43,11 @@
 				"type": "git",
 				"url": "git://github.com/assimp/assimp.git"
 			},
-			"recipe_osx": [ 
+			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
 				       "-DBUILD_SHARED_LIBS=OFF +",
                        "$(MKVFX_SRC_ROOT)/assimp",
-				"make -j 4" 
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install"
@@ -81,7 +81,7 @@
 			},
 			"recipe_osx": [
 
-			    "SEARCH=\"BGFX_CONFIG_USE_TINYSTL 1\"; +", 
+			    "SEARCH=\"BGFX_CONFIG_USE_TINYSTL 1\"; +",
 			    "REPLACE=\"BGFX_CONFIG_USE_TINYSTL 0\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/bgfx/src/config.h > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/bgfx/src/config.h",
@@ -139,9 +139,9 @@
 				"type": "git",
 				"url": "https://github.com/bulletphysics/bullet3.git"
 			},
-			"recipe_osx": [ 
+			"recipe_osx": [
 				"./premake4_osx gmake",
-				"cd gmake; make" 
+				"cd gmake; make"
 			],
 			"install_osx": [
 				"cp $(MKVFX_SRC_ROOT)/bullet/bin/libBullet3Dynamics_gmake.a $(MKVFX_ROOT)/lib/libBullet3Dynamics.a",
@@ -181,9 +181,13 @@
 				"type": "git",
 				"url": "git://github.com/bkaradzic/bx.git"
 			},
-			"recipe": [ "make" ],
+			"recipe_osx": [ "make" ],
 			"install_osx": [
 				"cp -R $(MKVFX_SRC_ROOT)/bx/include/bx $(MKVFX_ROOT)/include/bx"
+			],
+			"recipe_windows": [
+				"\"$(MKVFX_SRC_ROOT)/bx/tools/bin/windows/genie.exe\" vs2015",
+				"msbuild \"$(MKVFX_SRC_ROOT)\\bx\\.build\\projects\\vs2015\\bx.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			]
 		},
 		{
@@ -235,7 +239,7 @@
 			},
 			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) -DGLFW_USE_MENUBAR=1 $(MKVFX_SRC_ROOT)/glfw",
-				"make -j 4" 
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install",
@@ -269,7 +273,7 @@
 			"recipe_osx": [
 				"cmake -DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/hdf5",
 				"make -j 4",
-				"make -j 4" 
+				"make -j 4"
 			],
 			"install_osx": [
 				"make install"
@@ -561,57 +565,57 @@
 				"url": "git://github.com/dreamworksanimation/openvdb.git"
 			},
 			"recipe_osx": [
-			    "SEARCH=\"LOG4CPLUS_INCL_DIR := \\/rel\\/folio\\/log4cplus\\/log4cplus-1.0.3-latest\\/sys_include\"; +", 
+			    "SEARCH=\"LOG4CPLUS_INCL_DIR := \\/rel\\/folio\\/log4cplus\\/log4cplus-1.0.3-latest\\/sys_include\"; +",
 			    "REPLACE=\"LOG4CPLUS_INCL_DIR :=\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"PYTHON_VERSION := 2.6\"; +", 
+			    "SEARCH=\"PYTHON_VERSION := 2.6\"; +",
 			    "REPLACE=\"PYTHON_VERSION := 2.7\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"\\$(HFS)\\/python\\/include\"; +", 
+			    "SEARCH=\"\\$(HFS)\\/python\\/include\"; +",
 			    "REPLACE=\"\\$(HT)\\/include\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"has_python := yes\"; +", 
+			    "SEARCH=\"has_python := yes\"; +",
 			    "REPLACE=\"has_python := no\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"CPPUNIT_INCL_DIR := \\/rel\\/map\\/generic-2013.22\\/sys_include\"; +", 
+			    "SEARCH=\"CPPUNIT_INCL_DIR := \\/rel\\/map\\/generic-2013.22\\/sys_include\"; +",
 			    "REPLACE=\"CPPUNIT_INCL_DIR := \"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"CONCURRENT_MALLOC_LIB := -ljemalloc\"; +", 
+			    "SEARCH=\"CONCURRENT_MALLOC_LIB := -ljemalloc\"; +",
 			    "REPLACE=\"CONCURRENT_MALLOC_LIB := \"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/include\"; +", 
+			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/include\"; +",
 			    "REPLACE=\"\\$(HT)\\/include\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/lib\"; +", 
+			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/lib\"; +",
 			    "REPLACE=\"\\$(HDSO)\\/lib\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"-framework Cocoa -framework OpenGL\"; +", 
+			    "SEARCH=\"-framework Cocoa -framework OpenGL\"; +",
 			    "REPLACE=\"-framework Cocoa -framework CoreVideo -framework OpenGL\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"DOXYGEN := doxygen\"; +", 
+			    "SEARCH=\"DOXYGEN := doxygen\"; +",
 			    "REPLACE=\"DOXYGEN := \"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
 
-			    "SEARCH=\"DESTDIR := \\/tmp\\/OpenVDB\"; +", 
+			    "SEARCH=\"DESTDIR := \\/tmp\\/OpenVDB\"; +",
 			    "REPLACE=\"DESTDIR := \\$(HT)\"; +",
 			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
 			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
@@ -707,7 +711,7 @@
 			   "dependencies in the projects they are needed."
 			]
 		},
-		{ 
+		{
 			"name": "qt4",
 			"notes": "http://www.linuxfromscratch.org/blfs/view/svn/x/qt4.html",
 			"dir": "qt4",
@@ -732,7 +736,7 @@
 			"name": "qt5",
 			"dir": "qt5",
 			"build_in": "$(MKVFX_SRC_ROOT)/qt5/qt-everywhere-opensource-src-5.4.0",
-			"repository": { 
+			"repository": {
 				"type": "curl-tgz",
 				"url": "http://download.qt-project.org/official_releases/qt/5.4/5.4.0/single/qt-everywhere-opensource-src-5.4.0.tar.gz"
 			},
