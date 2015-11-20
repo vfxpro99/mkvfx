@@ -2,6 +2,7 @@
 	"packages": [
 		{
 			"name": "Alembic",
+			"platforms": ["osx"],
 			"dir": "Alembic",
 			"build_in": "$(MKVFX_SRC_ROOT)/Alembic",
 			"dependencies": [ "boost", "hdf5", "IlmBase", "PyIlmBase" ],
@@ -37,6 +38,7 @@
 		},
 		{
 			"name": "assimp",
+			"platforms": ["osx"],
 			"dir": "assimp",
 			"build_in": "$(MKVFX_BUILD_ROOT)/assimp",
 			"repository": {
@@ -55,6 +57,7 @@
 		},
 		{
 			"name": "autoconf",
+			"platforms": ["osx"],
 			"dir": "autoconf",
 			"build_in": "$(MKVFX_SRC_ROOT)/autoconf/autoconf-2.64",
 			"repository": {
@@ -72,6 +75,7 @@
 		},
 		{
 			"name": "bgfx",
+			"platforms": ["osx", "windows"],
 			"dir": "bgfx",
 			"dependencies": ["bx"],
 			"build_in": "/tmp/bgfx",
@@ -103,12 +107,15 @@
 			],
 			"recipe_windows": [
 				"\"$(MKVFX_SRC_ROOT)/bx/tools/bin/windows/genie.exe\" vs2015",
-				"msbuild \"$(MKVFX_SRC_ROOT)\\bgfx\\.build\\projects\\vs2015\\bgfx.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"msbuild \"$(MKVFX_SRC_ROOT)\\bgfx\\.build\\projects\\vs2015\\bgfx.vcxproj\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
-			"install": []
+			"install_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\include\\bgfx\\*\" \"$(MKVFX_ROOT)\\include\\bgfx\\\" /s /y"
+			]
 		},
 		{
 			"name": "boost",
+			"platforms": ["osx"],
 			"dir": "boost",
 			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_57_0",
 			"dependencies": [ "boost-build-club" ],
@@ -127,6 +134,7 @@
 		},
 		{
 			"name": "boost-build-club",
+			"platforms": ["osx"],
 			"dir": "boost-build-club",
 			"build_in": "$(MKVFX_SRC_ROOT)/boost-build-club",
 			"repository": {
@@ -138,6 +146,7 @@
 		},
 		{
 			"name": "bullet",
+			"platforms": ["osx"],
 			"dir": "bullet",
 			"build_in": "$(MKVFX_SRC_ROOT)/bullet/build3",
 			"repository": {
@@ -180,6 +189,7 @@
 		},
 		{
 			"name": "bx",
+			"platforms": ["osx", "windows"],
 			"dir": "bx",
 			"build_in": "$(MKVFX_SRC_ROOT)/bx",
 			"repository": {
@@ -194,10 +204,13 @@
 				"\"$(MKVFX_SRC_ROOT)/bx/tools/bin/windows/genie.exe\" vs2015",
 				"msbuild \"$(MKVFX_SRC_ROOT)\\bx\\.build\\projects\\vs2015\\bx.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
-			"install": []
+			"install_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\bx\\*\" \"$(MKVFX_ROOT)\\include\\bx\\\" /s /y"
+			]
 		},
 		{
 			"name": "c-blosc",
+			"platforms": ["osx"],
 			"dir": "c-blosc",
 			"build_in": "$(MKVFX_BUILD_ROOT)/c-blosc",
 			"repository": {
@@ -219,6 +232,7 @@
 		},
 		{
 			"name": "glew",
+			"platforms": ["osx"],
 			"dir": "glew",
 			"build_in": "$(MKVFX_SRC_ROOT)/glew",
 			"repository": {
@@ -236,6 +250,7 @@
 		},
 		{
 			"name": "glfw",
+			"platforms": ["osx"],
 			"dir": "glfw",
 			"notes": "GLFW_USE_RETINA option enables retina displays",
 			"build_in": "$(MKVFX_BUILD_ROOT)/glfw",
@@ -254,6 +269,7 @@
 		},
 		{
 			"name": "glm",
+			"platforms": ["osx"],
 			"dir": "glm",
 			"build_in": "/tmp/glm",
 			"repository": {
@@ -270,6 +286,7 @@
 		},
 		{
 			"name": "hdf5",
+			"platforms": ["osx"],
 			"dir": "hdf5",
 			"build_in": "$(MKVFX_BUILD_ROOT)/hdf5",
 			"repository": {
@@ -287,6 +304,7 @@
 		},
 		{
 			"name": "IlmBase",
+			"platforms": ["osx"],
 			"notes": "Namespaced dylibs must be symlinked to the base names",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/IlmBase",
@@ -318,6 +336,7 @@
 		},
 		{
 			"name": "jsoncpp",
+			"platforms": ["osx"],
 			"dir": "jsoncpp",
 			"build_in": "/tmp/jsoncpp",
 			"repository": {
@@ -334,6 +353,7 @@
 		},
 		{
 			"name": "LabText",
+			"platforms": ["osx"],
 			"dir": "LabText",
 			"build_in": "/tmp/LabText",
 			"repository": {
@@ -359,6 +379,7 @@
 		},
 		{
 			"name": "libjpeg",
+			"platforms": ["osx"],
 			"dir": "libjpeg",
 			"build_in": "$(MKVFX_SRC_ROOT)/libjpeg/jpeg-6b",
 			"repository": {
@@ -376,6 +397,7 @@
 		},
 		{
 			"name": "libpng",
+			"platforms": ["osx"],
 			"notes": "libpng builds static on OSX to avoid conflict with CoreImage",
 			"dir": "libpng",
 			"build_in": "$(MKVFX_SRC_ROOT)/libpng",
@@ -395,6 +417,7 @@
 		},
 		{
 			"name": "libtiff",
+			"platforms": ["osx"],
 			"notes": "disabled C++ extensions because they don't compile",
 			"dir": "libtiff",
 			"build_in": "$(MKVFX_SRC_ROOT)/libtiff",
@@ -413,6 +436,7 @@
 		},
 		{
 			"name": "llvm",
+			"platforms": ["osx"],
 			"dir": "llvm",
 			"build_in": "$(MKVFX_BUILD_ROOT)/llvm",
 			"notes": "using release_35 to match OSX system clang",
@@ -432,6 +456,7 @@
 		},
 		{
 			"name": "nanovg",
+			"platforms": ["osx"],
 			"dir": "nanovg",
 			"build_in": "$(MKVFX_BUILD_ROOT)/nanovg",
 			"repository": {
@@ -451,6 +476,7 @@
 		},
 		{
 			"name": "OpenColorIO",
+			"platforms": ["osx"],
 			"dir": "OpenColorIO",
 			"build_in": "$(MKVFX_BUILD_ROOT)/OpenColorIO",
 			"notes": "OpenColorIO and OpenImageIO are mutually dependent so running mkvfx twice is necessary",
@@ -470,6 +496,7 @@
 		},
 		{
 			"name": "OpenEXR",
+			"platforms": ["osx"],
 			"notes": "Namespaced dylibs must be symlinked to the base names",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/OpenEXR",
@@ -492,6 +519,7 @@
 		},
 		{
 			"name": "OpenImageIO",
+			"platforms": ["osx"],
 			"notes": "Specify FIELD3D_HOME= when Field3d is built",
 			"dir": "OpenImageIO",
 			"build_in": "$(MKVFX_SRC_ROOT)/OpenImageIO",
@@ -518,6 +546,7 @@
 		},
 		{
 			"name": "OpenShadingLanguage-WIP",
+			"platforms": ["osx"],
 			"dir": "OpenShadingLanguage",
 			"build_in": "$(MKVFX_SRC_ROOT)/OpenShadingLanguage",
 			"dependencies": ["OpenImageIO", "partio", "llvm"],
@@ -543,6 +572,7 @@
 		},
 		{
 			"name": "OpenSubdiv",
+			"platforms": ["osx"],
 			"dir": "OpenSubdiv",
 			"build_in": "/tmp/OpenSubdiv",
 			"dependencies": ["glew", "glfw", "IlmBase", "ptex"],
@@ -562,6 +592,7 @@
 		},
 		{
 			"name": "OpenVDB",
+			"platforms": ["osx"],
 			"note": "numpy is required before the python integration can be activated",
 			"dir": "OpenVDB",
 			"build_in": "$(MKVFX_ROOT)/OpenVDB",
@@ -639,6 +670,7 @@
 		},
 		{
 			"name": "partio",
+			"platforms": ["osx"],
 			"note": "bug in partio cmake file expects an html directory forcing in-src build",
 			"dir": "partio",
 			"build_in": "$(MKVFX_SRC_ROOT)/partio",
@@ -657,6 +689,7 @@
 		},
 		{
 			"name": "ptex",
+			"platforms": ["osx"],
 			"dir": "ptex",
 			"build_in": "$(MKVFX_SRC_ROOT)/ptex",
 			"repository": {
@@ -670,6 +703,7 @@
 		},
 		{
 			"name": "PyIlmBase",
+			"platforms": ["osx"],
 			"notes": "A system include must be patched into CMakeFiles.txt for boost python",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/PyIlmBase",
@@ -694,6 +728,7 @@
 		},
 		{
 			"name": "python",
+			"platforms": ["osx"],
 			"dir": "python",
 			"build_in": "$(MKVFX_SRC_ROOT)/python/Python-2.7.3",
 			"dependencies": "sqlite",
@@ -711,14 +746,16 @@
 		},
 		{
 			"name": "qt",
+			"platforms": ["osx"],
 			"recipe": [
 			   "echo Please ensure Qt is installed in your installation root.",
-			   "echo It takes many many hours to build, and so qt4 and at5 not listed as",
+			   "echo It takes many many hours to build, and so qt4 and qt5 not listed as",
 			   "dependencies in the projects they are needed."
 			]
 		},
 		{
 			"name": "qt4",
+			"platforms": ["osx"],
 			"notes": "http://www.linuxfromscratch.org/blfs/view/svn/x/qt4.html",
 			"dir": "qt4",
 			"build_in": "$(MKVFX_SRC_ROOT)/qt4/qt-everywhere-opensource-src-4.8.6",
@@ -740,6 +777,7 @@
 		},
 		{
 			"name": "qt5",
+			"platforms": ["osx"],
 			"dir": "qt5",
 			"build_in": "$(MKVFX_SRC_ROOT)/qt5/qt-everywhere-opensource-src-5.4.0",
 			"repository": {
@@ -760,6 +798,7 @@
 		},
 		{
 			"name": "sqlite",
+			"platforms": ["osx"],
 			"dir": "sqlite",
 			"build_in": "$(MKVFX_SRC_ROOT)/sqlite/sqlite-autoconf-3070900",
 			"repository": {
@@ -779,6 +818,7 @@
 		},
 		{
 			"name": "stb",
+			"platforms": ["osx"],
 			"dir": "stb",
 			"build_in": "$(MKVFX_BUILD_ROOT)/stb",
 			"repository": {
@@ -792,6 +832,7 @@
 		},
 		{
 			"name": "tbb",
+			"platforms": ["osx"],
 			"dir": "tbb",
 			"build_in": "$(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss",
 			"repository": {
