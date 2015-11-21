@@ -38,6 +38,7 @@
 		},
 		{
 			"name": "assimp",
+			"notes": "Building non-boost variation with reduced multithreading",
 			"platforms": ["osx"],
 			"dir": "assimp",
 			"build_in": "$(MKVFX_BUILD_ROOT)/assimp",
@@ -59,14 +60,14 @@
 			"name": "autoconf",
 			"platforms": ["osx"],
 			"dir": "autoconf",
-			"build_in": "$(MKVFX_SRC_ROOT)/autoconf/autoconf-2.64",
+			"build_in": "$(MKVFX_SRC_ROOT)/autoconf/autoconf-2.69",
 			"repository": {
 				"type": "curl-tgz",
-				"url": "http://ftpmirror.gnu.org/autoconf/autoconf-2.64.tar.gz"
+				"url": "http://ftpmirror.gnu.org/autoconf/autoconf-2.69.tar.gz"
 			},
 			"recipe": [
 				"pwd",
-				"./configure --prefix=/usr/local",
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
 				"make -j 4"
 			],
 			"install_osx": [
@@ -335,6 +336,24 @@
 			]
 		},
 		{
+			"name": "jpeg",
+			"platforms": ["osx"],
+			"dir": "jpeg",
+			"build_in": "$(MKVFX_SRC_ROOT)/jpeg/jpeg-6b",
+			"repository": {
+				"type": "curl-tgz",
+				"url": "http://www.ijg.org/files/jpegsrc.v6b.tar.gz"
+			},
+			"recipe_osx": [
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
+				"make -j 4"
+			],
+			"install_osx": [
+				"make install",
+				"make install-lib"
+			]
+		},
+		{
 			"name": "jsoncpp",
 			"platforms": ["osx"],
 			"dir": "jsoncpp",
@@ -378,24 +397,6 @@
 			]
 		},
 		{
-			"name": "libjpeg",
-			"platforms": ["osx"],
-			"dir": "libjpeg",
-			"build_in": "$(MKVFX_SRC_ROOT)/libjpeg/jpeg-6b",
-			"repository": {
-				"type": "curl-tgz",
-				"url": "http://www.ijg.org/files/jpegsrc.v6b.tar.gz"
-			},
-			"recipe_osx": [
-				"./configure --prefix=$(MKVFX_ROOT)",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install",
-				"make install-lib"
-			]
-		},
-		{
 			"name": "libpng",
 			"platforms": ["osx"],
 			"notes": "libpng builds static on OSX to avoid conflict with CoreImage",
@@ -426,7 +427,7 @@
 				"url": "https://github.com/vadz/libtiff"
 			},
 			"recipe_osx": [
-				"./configure --prefix=$(MKVFX_ROOT) --enable-cxx=0",
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT) --enable-cxx=0",
 				"make -j 4"
 			],
 			"install_osx": [
@@ -447,6 +448,7 @@
 			},
 			"recipe_osx": [
 				"cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=\"X86\" -DLLVM_REQUIRES_RTTI=ON +",
+				" -DLLVM_OPTIMIZED_TABLEGEN=On -DCMAKE_CXX_FLAGS_RELEASE='-DNDEBUG' +",
 				" -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/llvm",
 				"make -j 4"
 			],
@@ -479,14 +481,14 @@
 			"platforms": ["osx"],
 			"dir": "OpenColorIO",
 			"build_in": "$(MKVFX_BUILD_ROOT)/OpenColorIO",
-			"notes": "OpenColorIO and OpenImageIO are mutually dependent so running mkvfx twice is necessary",
+			"notes": "OpenColorIO and OpenImageIO are mutually dependent so running mkvfx twice is necessary. nev vars described here #{HOMEBREW_PREFIX}/share/ocio/setup_ocio.sh",
 			"dependencies": ["glew","python"],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/imageworks/OpenColorIO.git"
 			},
 			"recipe_osx": [
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenColorIO",
+				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenColorIO -DCMAKE_VERBOSE_MAKEFILE=OFF",
 				"make -j 4"
 			],
 			"install_osx": [
@@ -523,7 +525,7 @@
 			"notes": "Specify FIELD3D_HOME= when Field3d is built",
 			"dir": "OpenImageIO",
 			"build_in": "$(MKVFX_SRC_ROOT)/OpenImageIO",
-			"dependencies": [ "libjpeg", "libpng", "libtiff", "OpenColorIO", "glew" ],
+			"dependencies": [ "jpeg", "libpng", "libtiff", "OpenColorIO", "glew" ],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/OpenImageIO/oiio.git"
@@ -737,7 +739,7 @@
 				"url": "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tar.bz2"
 			},
 			"recipe_osx": [
-				"./configure --prefix=$(MKVFX_ROOT)",
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
 				"make -j 4"
 			],
 			"install_osx": [
@@ -763,7 +765,7 @@
 				"echo qt4 does not build on OSX 10.10 and greater"
 			],
 			"recipe": [
-				"./configure --prefix=$(MKVFX_ROOT) +",
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT) +",
 				" -confirm-license -opensource -release +",
 				" -nomake tests -nomake examples",
 				"make -j 4"
@@ -786,7 +788,7 @@
 			},
 			"notes": "qt5 takes an unknown number of hours to complete building, so it is not listed as a dependency.",
 			"recipe": [
-				"./configure --prefix=$(MKVFX_ROOT) +",
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT) +",
 				" -confirm-license -opensource -release +",
 				" -no-framework",
 				" -nomake tests -nomake examples",
@@ -809,7 +811,7 @@
 				"echo using sqlite from system SDK"
 			],
 			"recipe_linux": [
-				"./configure --prefix=$(MKVFX_ROOT)",
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
 				"make -j 4"
 			],
 			"install_osx": [
