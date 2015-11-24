@@ -270,7 +270,7 @@
 		},
 		{
 			"name": "glm",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"dir": "glm",
 			"build_in": "/tmp/glm",
 			"repository": {
@@ -283,6 +283,12 @@
 			],
 			"install_osx": [
 				"make install"
+			],
+			"recipe_windows": [
+				"cmake -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/glm\""
+			],
+			"install_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glm\\glm\\*\" \"$(MKVFX_ROOT)\\include\\glm\\\" /s /y"
 			]
 		},
 		{
