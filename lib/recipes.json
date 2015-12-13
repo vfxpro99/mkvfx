@@ -906,6 +906,27 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc.dylib $(MKVFX_ROOT)/bin/libtbbmalloc.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc_proxy.dylib $(MKVFX_ROOT)/bin/libtbbmalloc_proxy.dylib"
 			]
+		},
+		{
+			"name": "z",
+			"platforms": ["windows"],
+			"notes": "system lib on osx",
+			"dir": "zlib",
+			"build_in": "$(MKVFX_BUILD_ROOT)/zlib",
+			"repository": {
+				"type": "git",
+				"url": "git://github.com/madler/zlib.git"
+			},
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)\\zlib\"",
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\zlib\\zlib.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+			],
+			"install_windows": [
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\*.h\" \"$(MKVFX_ROOT)\\include\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlib.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlibstatic.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlib.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
+			]
 		}
 	]
 }
