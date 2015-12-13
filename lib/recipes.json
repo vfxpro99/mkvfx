@@ -359,7 +359,7 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath.dylib $(MKVFX_ROOT)/bin/libIexMath.dylib"
 			],
 			"install_windows": [
-				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_BUILD_ROOT)\\include\\OpenEXR'\"",
+				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_ROOT)\\include\\OpenEXR'\"",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\config\\*\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
 				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\Half\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
@@ -557,8 +557,12 @@
 				"make -j 4"
 			],
 			"recipe_windows": [
-				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\OpenEXR.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DILMBASE_PACKAGE_PREFIX=\"$(MKVFX_ROOT)\" -DZLIB_LIBRARY=\"$(MKVFX_ROOT)\\lib\\zlibstatic.lib\" -DZLIB_INCLUDE_DIR=\"$(MKVFX_ROOT)\\include\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR\"",
+				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release'\"",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\Release\\Half.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Iex\\Release\\*.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\*.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\openexr.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_osx": [
 				"make install",
@@ -910,7 +914,7 @@
 		{
 			"name": "z",
 			"platforms": ["windows"],
-			"notes": "system lib on osx",
+			"notes": "only building on windows because z is a system lib on osx",
 			"dir": "zlib",
 			"build_in": "$(MKVFX_BUILD_ROOT)/zlib",
 			"repository": {
@@ -923,6 +927,7 @@
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\*.h\" \"$(MKVFX_ROOT)\\include\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\zlib\\zlib.h\" \"$(MKVFX_ROOT)\\include\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlib.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlibstatic.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlib.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
