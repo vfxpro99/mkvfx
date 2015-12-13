@@ -233,7 +233,7 @@
 		},
 		{
 			"name": "glew",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"dir": "glew",
 			"build_in": "$(MKVFX_SRC_ROOT)/glew",
 			"repository": {
@@ -247,11 +247,18 @@
 			"install_osx": [
 				"make -C $(MKVFX_SRC_ROOT)/glew GLEW_DEST='$(MKVFX_ROOT)' install",
 				"ln -s -f $(MKVFX_ROOT)/lib/libGLEW.dylib $(MKVFX_ROOT)/bin/libGLEW.dylib"
+			],
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/glew\"",
+				"msbuild \"$(MKVFX_SRC_ROOT)\\glew\\glew.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+			],
+			"install_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glew\\include\\GL\\*\" \"$(MKVFX_ROOT)\\include\\GL\\\" /s /y"
 			]
 		},
 		{
 			"name": "glfw",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"dir": "glfw",
 			"notes": "GLFW_USE_RETINA option enables retina displays",
 			"build_in": "$(MKVFX_BUILD_ROOT)/glfw",
@@ -266,6 +273,13 @@
 			"install_osx": [
 				"make install",
 				"ln -s -f $(MKVFX_ROOT)/lib/libglfw3.a $(MKVFX_ROOT)/lib/libglfw.a"
+			],
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/glfw\"",
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\glfw\\GLFW.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+			],
+			"install_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glfw\\include\\GLFW\\*\" \"$(MKVFX_ROOT)\\include\\GLFW\\\" /s /y"
 			]
 		},
 		{
@@ -311,7 +325,7 @@
 		},
 		{
 			"name": "IlmBase",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"notes": "Namespaced dylibs must be symlinked to the base names",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/IlmBase",
@@ -322,6 +336,10 @@
 			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/IlmBase",
 				"make -j 4"
+			],
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/IlmBase\"",
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmBase.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_osx": [
 				"make install",
@@ -339,6 +357,26 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libIex.dylib $(MKVFX_ROOT)/bin/libIex.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libImath.dylib $(MKVFX_ROOT)/bin/libImath.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath.dylib $(MKVFX_ROOT)/bin/libIexMath.dylib"
+			],
+			"install_windows": [
+				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_BUILD_ROOT)\\include\\OpenEXR'\"",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\config\\*\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\Half\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\Iex\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\IexMath\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\IlmThread\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\Imath\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\Release\\Half.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\Release\\Half.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Iex\\Release\\Iex-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Iex\\Release\\Iex-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IexMath\\Release\\IexMath-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IexMath\\Release\\IexMath-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Imath\\Release\\Imath-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Imath\\Release\\Imath-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\IlmThread-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\IlmThread-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
@@ -504,11 +542,12 @@
 		},
 		{
 			"name": "OpenEXR",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"notes": "Namespaced dylibs must be symlinked to the base names",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/OpenEXR",
 			"dependencies": [ "IlmBase" ],
+			"dependencies_windows": [ "IlmBase", "z" ],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
@@ -517,12 +556,18 @@
 				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR",
 				"make -j 4"
 			],
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR\"",
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\OpenEXR.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+			],
 			"install_osx": [
 				"make install",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImf.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImfUtil-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImfUtil.dylib",
-
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf.dylib $(MKVFX_ROOT)/bin/libIlmImf.dylib"
+			],
+			"install_windows": [
+
 			]
 		},
 		{

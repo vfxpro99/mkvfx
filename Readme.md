@@ -30,8 +30,9 @@ project, subsequently running
 
 will add the bits that were not already there for OpenSubdiv.
 
-At the moment there are only recipes for OSX, but a small amount of patch
-will allow building on other platforms. Pull requests welcome of course.
+At the moment there are many recipes for OSX, and several Windows.
+The recipe system allows building on other platforms. Pull requests are
+welcome of course.
 
 It would be nice if the script also knows about configurations. At the
 moment, it pulls top of tree of a specific branch (by default master), but
@@ -104,7 +105,7 @@ on Windows, if using VS2015 use this instead:
 
 Now type mkvfx, and all will be revealed.
 
-You should see a message like -
+On OSX you will see a message like -
 
 ```
  mkvfx knows how to build:
