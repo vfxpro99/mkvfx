@@ -65,7 +65,9 @@
 				"make install"
 			],
 			"install_windows": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\assimp\\include\\assimp\" \"$(MKVFX_ROOT)\\include\\assimp\\\" /s /y"
+				"xcopy \"$(MKVFX_SRC_ROOT)\\assimp\\include\\assimp\" \"$(MKVFX_ROOT)\\include\\assimp\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\assimp\\code\\Release\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\assimp\\code\\Release\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
@@ -244,10 +246,24 @@
 			]
 		},
 		{
+			"name": "glew-build-club",
+			"platforms": ["windows"],
+			"notes": "glew is hard to build on Windows without cygwin",
+			"dir": "glew-build-club",
+			"repository": {
+				"type": "git",
+				"url": "https://github.com/meshula/glew-build-club.git"
+			},
+			"recipe": [],
+			"install": []
+		},
+		{
 			"name": "glew",
 			"platforms": ["osx", "windows"],
 			"dir": "glew",
+			"dependencies_windows": ["glew-build-club"],
 			"build_in": "$(MKVFX_SRC_ROOT)/glew",
+			"build_in_windows": "$(MKVFX_BUILD_ROOT)/glew",
 			"repository": {
 				"type": "git",
 				"url": "https://github.com/nigels-com/glew.git"
@@ -261,11 +277,20 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libGLEW.dylib $(MKVFX_ROOT)/bin/libGLEW.dylib"
 			],
 			"recipe_windows": [
-				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/glew\"",
-				"msbuild \"$(MKVFX_SRC_ROOT)\\glew\\glew.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_windows": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\glew\\include\\GL\\*\" \"$(MKVFX_ROOT)\\include\\GL\\\" /s /y"
+				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_ROOT)\\include\\GL'\"",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-build-club\\include\\GL\\*\" \"$(MKVFX_ROOT)\\include\\GL\\\" /s /y",
+				"cl /c -DSTATIC -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
+				"lib /out:glew_static.lib glew.obj",
+				"cl /c -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
+				"link /dll /out:glew.dll glew.obj opengl32.lib",
+				"cl /c -DSTATIC -DGLEW_MX -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
+				"lib /out:glew_mx_static.lib glew.obj",
+				"cl /c -DGLEW_MX -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
+				"link /dll /out:glew_mx.dll glew.obj opengl32.lib",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\glew\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\glew\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
@@ -291,7 +316,8 @@
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\glfw\\GLFW.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_windows": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\glfw\\include\\GLFW\\*\" \"$(MKVFX_ROOT)\\include\\GLFW\\\" /s /y"
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glfw\\include\\GLFW\\*\" \"$(MKVFX_ROOT)\\include\\GLFW\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\glfw\\src\\Release\\*\" \"$(MKVFX_ROOT)\\lib\\\" /s /y"
 			]
 		},
 		{
@@ -786,7 +812,7 @@
 		},
 		{
 			"name": "PyIlmBase",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"notes": "A system include must be patched into CMakeFiles.txt for boost python",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/PyIlmBase",
@@ -803,11 +829,16 @@
 				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase",
 				"make -j 4"
 			],
+			"recipe_windows": [
+				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase\"",
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\PyIlmBase\\pyilmbase.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+			],
 			"install_osx": [
 				"make install",
 				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyIex/*.h $(MKVFX_ROOT)/include",
 				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyImath/*.h $(MKVFX_ROOT)/include"
-			]
+			],
+			"install_windows": []
 		},
 		{
 			"name": "python",
