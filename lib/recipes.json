@@ -845,7 +845,7 @@
 			"platforms": ["osx"],
 			"dir": "python",
 			"build_in": "$(MKVFX_SRC_ROOT)/python/Python-2.7.3",
-			"dependencies": "sqlite",
+			"dependencies": ["sqlite"],
 			"repository": {
 				"type": "curl-tgz",
 				"url": "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tar.bz2"
