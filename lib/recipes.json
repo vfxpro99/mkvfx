@@ -130,26 +130,36 @@
 		},
 		{
 			"name": "boost",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"dir": "boost",
-			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_57_0",
+            "notes": "building boost 1.60 for vs2014 compatibility, 1.57 is minimum for OSX, 1.55 is vfxplatform",
+			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_60_0",
 			"dependencies": [ "boost-build-club" ],
 			"repository": {
 				"type": "curl-tgz",
-				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_57_0.tar.gz"
+				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_60_0.tar.gz"
 			},
 			"recipe_osx": [
-				"cp $(MKVFX_SRC_ROOT)/boost-build-club/* $(MKVFX_SRC_ROOT)/boost/boost_1_57_0",
+				"cp \"$(MKVFX_SRC_ROOT)/boost-build-club/*\" \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0\"",
 				"chmod 744 build-OSX.sh;./build-OSX.sh"
 			],
 			"install_osx": [
-				"cp $(MKVFX_SRC_ROOT)/boost/boost_1_57_0/stage-OSX/lib/* $(MKVFX_ROOT)/lib",
-				"cp -R $(MKVFX_SRC_ROOT)/boost/boost_1_57_0/boost $(MKVFX_ROOT)/include/boost"
-			]
+				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/stage-OSX/lib/*\" \"$(MKVFX_ROOT)/lib\"",
+				"cp -R \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/boost\" \"$(MKVFX_ROOT)/include/boost\""
+			],
+            "recipe_windows": [
+                "xcopy \"$(MKVFX_SRC_ROOT)\\boost-build-club\\*\" \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\\" /s /y",
+                "cmd.exe '/C build-win-shared.bat"
+            ],
+            "install_windows": [
+                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\boost\\*\" \"$(MKVFX_ROOT)\\include\\boost\\\" /s /y"
+            ]
 		},
 		{
 			"name": "boost-build-club",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"dir": "boost-build-club",
 			"build_in": "$(MKVFX_SRC_ROOT)/boost-build-club",
 			"repository": {
@@ -157,7 +167,7 @@
 				"url": "https://github.com/meshula/boost-build-club.git"
 			},
 			"recipe": [],
-			"install_osx": []
+			"install": []
 		},
 		{
 			"name": "bullet",
