@@ -920,6 +920,22 @@
 				"make install"
 			]
 		},
+        {
+            "name": "sdl2",
+            "platforms": ["windows"],
+            "dir": "sdl2",
+            "notes": "SDL is currently broken on Windows as it has not been migrated to the new Windows SDKs",
+            "build_in": "$(MKVFX_BUILD_ROOT)/sdl2",
+            "repository": {
+                "type": "curl-tgz",
+                "url": "https://libsdl.org/release/SDL2-2.0.3.tar.gz"
+            },
+            "recipe_windows": [
+                "cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)\\sdl2\\SDL2-2.0.3\"",
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\sdl2\\sdl2.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+            ],
+            "install": []
+        },
 		{
 			"name": "sqlite",
 			"platforms": ["osx"],
