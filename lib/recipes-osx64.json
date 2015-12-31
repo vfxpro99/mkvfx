@@ -256,22 +256,9 @@
 			]
 		},
 		{
-			"name": "glew-build-club",
-			"platforms": ["windows"],
-			"notes": "glew is hard to build on Windows without cygwin",
-			"dir": "glew-build-club",
-			"repository": {
-				"type": "git",
-				"url": "https://github.com/meshula/glew-build-club.git"
-			},
-			"recipe": [],
-			"install": []
-		},
-		{
 			"name": "glew",
-			"platforms": ["osx", "windows"],
+			"platforms": ["osx"],
 			"dir": "glew",
-			"dependencies_windows": ["glew-build-club"],
 			"build_in": "$(MKVFX_SRC_ROOT)/glew",
 			"build_in_windows": "$(MKVFX_BUILD_ROOT)/glew",
 			"repository": {
@@ -285,22 +272,6 @@
 			"install_osx": [
 				"make -C $(MKVFX_SRC_ROOT)/glew GLEW_DEST='$(MKVFX_ROOT)' install",
 				"ln -s -f $(MKVFX_ROOT)/lib/libGLEW.dylib $(MKVFX_ROOT)/bin/libGLEW.dylib"
-			],
-			"recipe_windows": [
-			],
-			"install_windows": [
-				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_ROOT)\\include\\GL'\"",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-build-club\\include\\GL\\*\" \"$(MKVFX_ROOT)\\include\\GL\\\" /s /y",
-				"cl /c -DSTATIC -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
-				"lib /out:glew_static.lib glew.obj",
-				"cl /c -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
-				"link /dll /out:glew.dll glew.obj opengl32.lib",
-				"cl /c -DSTATIC -DGLEW_MX -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
-				"lib /out:glew_mx_static.lib glew.obj",
-				"cl /c -DGLEW_MX -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
-				"link /dll /out:glew_mx.dll glew.obj opengl32.lib",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\glew\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\glew\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
@@ -486,20 +457,6 @@
 				"mkdir -p $(MKVFX_ROOT)/include/LabText",
 				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.h $(MKVFX_ROOT)/include/LabText",
 				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.hpp $(MKVFX_ROOT)/include/LabText"
-			],
-			"recipe_windows": [
-				"cl /c \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/dict.cpp\"",
-				"cl /c /EHsc -I\"$(MKVFX_SRC_ROOT)/LabText/src\" \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/Dictionary.cpp\"",
-				"cl /c \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/ftoa.cpp\"",
-				"cl /c \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/itoa.cpp\"",
-				"cl /c /EHsc -I\"$(MKVFX_SRC_ROOT)/LabText/src\" \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/TextScanner.cpp\"",
-				"cl /c /EHsc -I\"$(MKVFX_SRC_ROOT)/LabText/src\" \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/TextScannerLib.cpp\"",
-				"lib /out:LabText.lib dict.obj Dictionary.obj ftoa.obj itoa.obj TextScanner.obj TextScannerLib.obj"
-			],
-			"install_windows": [
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\LabText\\LabText.lib\" \"$(MKVFX_ROOT)\\lib\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\LabText\\src\\LabText\\*.hpp\" \"$(MKVFX_ROOT)\\include\\LabText\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\LabText\\src\\LabText\\*.h\" \"$(MKVFX_ROOT)\\include\\LabText\\\" /s /y"
 			]
 		},
 		{
@@ -1000,28 +957,6 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libtbb.dylib $(MKVFX_ROOT)/bin/libtbb.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc.dylib $(MKVFX_ROOT)/bin/libtbbmalloc.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc_proxy.dylib $(MKVFX_ROOT)/bin/libtbbmalloc_proxy.dylib"
-			]
-		},
-		{
-			"name": "z",
-			"platforms": ["windows"],
-			"notes": "only building on windows because z is a system lib on osx",
-			"dir": "zlib",
-			"build_in": "$(MKVFX_BUILD_ROOT)/zlib",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/madler/zlib.git"
-			},
-			"recipe_windows": [
-				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)\\zlib\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\zlib\\zlib.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
-			],
-			"install_windows": [
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\*.h\" \"$(MKVFX_ROOT)\\include\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\zlib\\zlib.h\" \"$(MKVFX_ROOT)\\include\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlib.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlibstatic.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\Release\\zlib.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		}
 	]

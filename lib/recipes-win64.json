@@ -39,7 +39,7 @@
 		{
 			"name": "assimp",
 			"notes": "Building non-boost variation with reduced multithreading",
-			"platforms": ["osx", "windows"],
+			"platforms": ["windows"],
 			"dependencies_windows": [ "z" ],
 			"dir": "assimp",
 			"build_in": "$(MKVFX_BUILD_ROOT)/assimp",
@@ -47,13 +47,6 @@
 				"type": "git",
 				"url": "git://github.com/assimp/assimp.git"
 			},
-			"recipe_osx": [
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
-				       "-DBUILD_SHARED_LIBS=OFF +",
-                       "$(MKVFX_SRC_ROOT)/assimp",
-				"make -j 4"
-			],
-
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" +",
 					"-DDirectX_D3DX9_LIBRARY=\"%WINDOWSSDKDIR%Lib\\%WINDOWSSDKVERSION%um\\x86\\d3d9.lib\" +",
@@ -61,31 +54,10 @@
 					"-DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/assimp\"",
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\assimp\\assimp.sln\" /t:assimp /p:Configuration=Release /p:Platform=x64"
 			],
-			"install_osx": [
-				"make install"
-			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\assimp\\include\\assimp\" \"$(MKVFX_ROOT)\\include\\assimp\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\assimp\\code\\Release\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\assimp\\code\\Release\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
-			]
-		},
-		{
-			"name": "autoconf",
-			"platforms": ["osx"],
-			"dir": "autoconf",
-			"build_in": "$(MKVFX_SRC_ROOT)/autoconf/autoconf-2.69",
-			"repository": {
-				"type": "curl-tgz",
-				"url": "http://ftpmirror.gnu.org/autoconf/autoconf-2.69.tar.gz"
-			},
-			"recipe": [
-				"pwd",
-				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
-				"make -j 4"
-			],
-			"install_osx": [
-				"sudo make install"
 			]
 		},
 		{
@@ -464,29 +436,13 @@
 		},
 		{
 			"name": "LabText",
-			"platforms": ["osx"],
+			"platforms": ["windows"],
 			"dir": "LabText",
 			"build_in": "$(MKVFX_BUILD_ROOT)/LabText",
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/meshula/LabText.git"
 			},
-			"recipe_osx": [
-				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/dict.cpp",
-				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/Dictionary.cpp",
-				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/ftoa.cpp",
-				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/itoa.cpp",
-				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/TextScanner.cpp",
-				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/TextScannerLib.cpp",
-				"gcc -c -std=c++11 -fPIC $(MKVFX_SRC_ROOT)/LabText/src/LabText/zmalloc.cpp",
-				"ar rs libLabText.a Dictionary.o TextScanner.o TextScannerLib.o dict.o ftoa.o itoa.o zmalloc.o"
-			],
-			"install_osx": [
-				"cp $(MKVFX_BUILD_ROOT)/LabText/libLabText.a $(MKVFX_ROOT)/lib",
-				"mkdir -p $(MKVFX_ROOT)/include/LabText",
-				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.h $(MKVFX_ROOT)/include/LabText",
-				"cp $(MKVFX_SRC_ROOT)/LabText/src/LabText/*.hpp $(MKVFX_ROOT)/include/LabText"
-			],
 			"recipe_windows": [
 				"cl /c \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/dict.cpp\"",
 				"cl /c /EHsc -I\"$(MKVFX_SRC_ROOT)/LabText/src\" \"$(MKVFX_SRC_ROOT)/LabText/src/LabText/Dictionary.cpp\"",
@@ -1005,7 +961,6 @@
 		{
 			"name": "z",
 			"platforms": ["windows"],
-			"notes": "only building on windows because z is a system lib on osx",
 			"dir": "zlib",
 			"build_in": "$(MKVFX_BUILD_ROOT)/zlib",
 			"repository": {
