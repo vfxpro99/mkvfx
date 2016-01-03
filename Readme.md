@@ -70,8 +70,6 @@ to do it. You'll also get npm with it.
 
 npm, installed as a side effect of installing node.js
 
-grunt, install globally using npm
-
 Python, grunt requires Python 2.7.x to run, so make sure Python is installed and
 available from the command line.
 
@@ -95,12 +93,6 @@ on Windows, if using VS2015 use this instead:
 
 ```sh
  npm install --msvs_version=2015
-```
-
- Run grunt in the root directory.
-
- ```sh
-  grunt
 ```
 
 Now type mkvfx, and all will be revealed.
