@@ -891,10 +891,10 @@
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\sdl2\\sdl2.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
             ],
             "install_windows": [
-                "xcopy \"$(MKVFX_SRC_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\"",
-                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\"",
-                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.lib\" \"$(MKVFX_ROOT)\\lib\"",
-                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.dll\" \"$(MKVFX_ROOT)\\bin\""
+                "xcopy \"$(MKVFX_SRC_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
+                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
+                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.lib\" \"$(MKVFX_ROOT)\\lib\" /s /y",
+                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.dll\" \"$(MKVFX_ROOT)\\bin\" /s /y"
             ]
         },
 		{
@@ -931,7 +931,7 @@
 				"cp $(MKVFX_SRC_ROOT)/stb/stb*.h $(MKVFX_ROOT)/include"
 			],
 			"install_windows": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\stb\\stb*.h\" \"$(MKVFX_ROOT)\\include\""
+				"xcopy \"$(MKVFX_SRC_ROOT)\\stb\\stb*.h\" \"$(MKVFX_ROOT)\\include\" /s /y"
 			]
 		},
 		{
