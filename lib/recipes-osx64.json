@@ -90,7 +90,7 @@
 		},
 		{
 			"name": "bgfx",
-			"platforms": ["osx", "windows"],
+			"platforms": ["osx"],
 			"dir": "bgfx",
 			"dependencies": ["bx"],
 			"build_in": "/tmp/bgfx",
@@ -111,7 +111,7 @@
 				    "-isystem $(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos +",
 				    "-DBGFX_CONFIG_RENDERER_OPENGL=41 +",
 				    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
-				    "-c -fPIC $(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp",
+				    "-c -fPIC \"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
 				"ar rs libbgfx.a amalgamated.o"
 			],
 			"install_osx": [
@@ -119,13 +119,6 @@
 				"cp -R $(MKVFX_SRC_ROOT)/bgfx/include $(MKVFX_ROOT)/include",
 				"echo bgfx built with -DBGFX_CONFIG_RENDERER_OPENGL=41 +",
 				    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS"
-			],
-			"recipe_windows": [
-				"\"$(MKVFX_SRC_ROOT)/bx/tools/bin/windows/genie.exe\" vs2015",
-				"msbuild \"$(MKVFX_SRC_ROOT)\\bgfx\\.build\\projects\\vs2015\\bgfx.vcxproj\" /t:Build /p:Configuration=Release /p:Platform=x64"
-			],
-			"install_windows": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\include\\bgfx\\*\" \"$(MKVFX_ROOT)\\include\\bgfx\\\" /s /y"
 			]
 		},
 		{
