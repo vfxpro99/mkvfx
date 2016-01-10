@@ -15,6 +15,7 @@ import sys
 import time
 
 version = "0.2.0"
+print "mkvfx", version
 
 #-----------------------------------------------------
 # Command line options
@@ -68,13 +69,11 @@ if args.nofetch or args.nfd:
 if args.nobuild:
     option_do_build = 0
 if args.nodependencies or args.nfd:
-    option_do_dependencies = 0
+    option_do_dependencies = 1
 if args.noinstall:
     option_do_install = 0
 if args.all:
     option_build_all = 1
-
-print "mkvfx", version
 
 
 #-----------------------------------------------------
@@ -382,7 +381,7 @@ def bake(package_name):
 
     print "Baking", package_name
     if package_name in built_packages:
-        # already built this one
+        print package_name, "already built"
         return
 
     if not package_name.lower() in lower_case_map:
@@ -473,8 +472,10 @@ except Exception as e:
 
 try:
     data = recipe_file.read()
+    recipe_file.close()
 except Exception as e:
     print "Could not read", recipe_path, "because", e
+    sys.exit(0)
 
 json_data = json.loads(data)
 
@@ -491,11 +492,24 @@ if len(to_build) == 0:
 print "Fetch %d Build %d Dependencies %d Install %d All %d" % (option_do_fetch, option_do_build, option_do_dependencies, option_do_install, option_build_all)
 print "Building:\n", to_build
 
+manifest_file_path = substitute_variables('$(MKVFX_ROOT)/mkvfx-manifest.json')
+try:
+    manifest_file = open(manifest_file_path, 'r')
+    data = manifest_file.read()
+    manifest_file.close()
+    built_packages = json.loads(data)
+except:
+    pass # if there was no existing manifest, it's fine
+
 if option_build_all:
     for package in lower_case_map:
         bake(package)
 else:
     for package in to_build:
         bake(package)
+
+manifest_file = open(manifest_file_path, 'w')
+manifest_file.write(json.dumps(built_packages, sort_keys=True))
+manifest_file.close()
 
 print 'MKVFX completed', time.ctime()
