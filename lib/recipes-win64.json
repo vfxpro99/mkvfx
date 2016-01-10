@@ -2,10 +2,10 @@
 	"packages": [
 		{
 			"name": "Alembic",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"dir": "Alembic",
 			"build_in": "$(MKVFX_SRC_ROOT)/Alembic",
-			"dependencies": [ "boost", "hdf5", "IlmBase", "PyIlmBase" ],
+			"dependencies": [ "boost", "hdf5", "IlmBase", "PyIlmBase", "z" ],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/alembic/alembic.git"
@@ -22,19 +22,32 @@
                 "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
 
 				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/alembic-stage -DCMAKE_INSTALL_PREFIX=/tmp +",
-					"-DBOOST_INCLUDEDIR=$(MKVFX_ROOT)/include +",
-					"-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
-					"-DHDF5_ROOT=$(MKVFX_ROOT) +",
-					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=$(MKVFX_ROOT)/lib/libPyImath.dylib +",
-					"-DILMBASE_ROOT=$(MKVFX_ROOT) +",
-					"-DALEMBIC_PYILMBASE_ROOT=$(MKVFX_ROOT) ",
+                    "-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
+                    "-DBOOST_LIBRARYDIR=\"$(MKVFX_ROOT)/lib\" +",
+                    "-DHDF5_ROOT=\"$(MKVFX_ROOT)\" +",
+                    "-DALEMBIC_PYILMBASE_PYIMATH_LIB=\"$(MKVFX_ROOT)/lib/libPyImath.dylib\" +",
+                    "-DILMBASE_ROOT=\"$(MKVFX_ROOT)\" +",
+                    "-DALEMBIC_PYILMBASE_ROOT=\"$(MKVFX_ROOT)\" ",
 				"make -j 4"
 			],
 			"install_osx": [
 				"make install",
                 "cp -R /tmp/alembic-1.5.8/include $(MKVFX_ROOT)",
                 "cp -R /tmp/alembic-1.5.8/lib $(MKVFX_ROOT)"
-			]
+			],
+            "recipe_windows": [
+                "cmake -G \"Visual Studio 14 2015 Win64\" +",
+                    "-DUSE_PYILMBASE=1 +",
+                    "-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
+					"-DBOOST_LIBRARYDIR=\"$(MKVFX_ROOT)/lib\" +",
+					"-DHDF5_ROOT=\"$(MKVFX_ROOT)\" +",
+                    "-DZLIB_LIBRARY=\"$(MKVFX_ROOT)\\lib\\zlibstatic.lib\" +",
+                    "-DZLIB_INCLUDE_DIR=\"$(MKVFX_ROOT)\\include\" +",
+					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=\"$(MKVFX_ROOT)/lib/libPyImath.dylib\" +",
+					"-DILMBASE_ROOT=\"$(MKVFX_ROOT)\" +",
+					"-DALEMBIC_PYILMBASE_ROOT=\"$(MKVFX_ROOT)\" "
+            ],
+            "install_windows": []
 		},
 		{
 			"name": "assimp",
@@ -327,7 +340,7 @@
 		},
 		{
 			"name": "hdf5",
-			"platforms": ["osx"],
+			"platforms": ["osx", "windows"],
 			"dir": "hdf5",
 			"build_in": "$(MKVFX_BUILD_ROOT)/hdf5",
 			"repository": {
@@ -341,7 +354,14 @@
 			],
 			"install_osx": [
 				"make install"
-			]
+			],
+            "recipe_windows": [
+                "cmake -G \"Visual Studio 14 2015 Win64\" +",
+                    "-DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/hdf5\""
+            ],
+            "install_windows": [
+
+            ]
 		},
 		{
 			"name": "IlmBase",

@@ -22,12 +22,12 @@
                 "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
 
 				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/alembic-stage -DCMAKE_INSTALL_PREFIX=/tmp +",
-					"-DBOOST_INCLUDEDIR=$(MKVFX_ROOT)/include +",
-					"-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
-					"-DHDF5_ROOT=$(MKVFX_ROOT) +",
-					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=$(MKVFX_ROOT)/lib/libPyImath.dylib +",
-					"-DILMBASE_ROOT=$(MKVFX_ROOT) +",
-					"-DALEMBIC_PYILMBASE_ROOT=$(MKVFX_ROOT) ",
+					"-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
+					"-DBOOST_LIBRARYDIR=\"$(MKVFX_ROOT)/lib\" +",
+					"-DHDF5_ROOT=\"$(MKVFX_ROOT)\" +",
+					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=\"$(MKVFX_ROOT)/lib/libPyImath.dylib\" +",
+					"-DILMBASE_ROOT=\"$(MKVFX_ROOT)\" +",
+					"-DALEMBIC_PYILMBASE_ROOT=\"$(MKVFX_ROOT)\" ",
 				"make -j 4"
 			],
 			"install_osx": [
@@ -334,7 +334,7 @@
 				"url": "git://github.com/meshula/hdf5.git"
 			},
 			"recipe_osx": [
-				"cmake -DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/hdf5",
+				"cmake -DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/hdf5\"",
 				"make -j 4",
 				"make -j 4"
 			],
