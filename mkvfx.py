@@ -283,7 +283,10 @@ def validate_tool_chain():
         #sys.exit(1)
 
     if not check_for_premake():
-        print "MKVFX could not find premake4 and/or 5, please install them and try again\n"
+        if not foundPremake4:
+            print "MKVFX could not find premake4. Build steps requiring premake4 will fail.\n"
+        if not foundPremake5:
+            print "MKVFX could not find premake5. Build steps requiring premake5 will fail.\n"
         print "Premake is available from here: http://industriousone.com/premake/download\n"
         #sys.exit(1)
 
