@@ -222,7 +222,15 @@ def check_for_premake():
     if searchedForPremake:
         return False
 
-    foundPremake4 = not execTask('premake4 --version')
+    # premake 4 returns status 1 for version, 5 returns 0 for version
+    # avoid execTask for this weird case
+    status = 1
+    try:
+        status = not subprocess.call('premake4 --version', shell=True)
+    except Exception as e:
+        status = 1
+
+    foundPremake4 = not status
     foundPremake5 = not execTask('premake5 --version')
 
     searchedForPremake = True
@@ -291,16 +299,20 @@ def validate_tool_chain():
         #sys.exit(1)
 
     print "Validation complete"
-    notFound = 0;
-    if not foundGit: notFound = notFound + 1
-    if not found7zip: notFound = notFound + 1
-    if not foundMake: notFound = notFound + 1
-    if not foundPremake4: notFound = notFound + 1
-    if not foundPremake5: notFound = notFound + 1
-    if notFound > 1:
-        print "Some tools were not found, some recipes may not run"
-    elif notFound > 0:
-        print "One tool was not found, some recipes may not run"
+    notFound = []
+    if not foundGit: notFound.append('git')
+    if not found7zip: notFound.append('7z')
+
+    # haven't found a viable make for msvc
+    if not build_platform == "windows":
+        if not foundMake: notFound.append('make')
+
+    if not foundPremake4: notFound.append('premake4')
+    if not foundPremake5: notFound.append('premake5')
+    if len(notFound) > 1:
+        print "Some tools", notFound, "were not found, some recipes may not run"
+    elif len(notFound) > 0:
+        print "One tool", notFound, "was not found, some recipes may not run"
     print
 
 validate_tool_chain()
