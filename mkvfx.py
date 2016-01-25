@@ -36,18 +36,16 @@ built_packages = []
 package_recipes = {}
 to_build = []
 
-
 def print_help():
     global package_recipes, build_platform
     print "mkvfx knows how to build:"
     for p in package_recipes:
-        if "platforms" in p:
-            if build_platform in p["platforms"]:
-                print ' ', p["name"]
+        if package_recipes[p]["platforms"]:
+            if build_platform in package_recipes[p]["platforms"]:
+                print ' ', package_recipes[p]['name']
         else:
-            print ' ', p["name"]
+            print ' ', package_recipes[p]['name']
     print "\nNote that git repos are shallow cloned.\n"
-
 
 class RecordLibAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
