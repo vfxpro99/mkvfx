@@ -75,38 +75,16 @@
 		},
 		{
 			"name": "bgfx",
-			"platforms": ["osx", "windows"],
+			"platforms": ["windows"],
 			"dir": "bgfx",
 			"dependencies": ["bx"],
-			"build_in": "/tmp/bgfx",
 			"build_in_windows": "$(MKVFX_SRC_ROOT)/bgfx",
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/bkaradzic/bgfx.git"
 			},
-			"recipe_osx": [
-			    "SEARCH=\"BGFX_CONFIG_USE_TINYSTL 1\"; +",
-			    "REPLACE=\"BGFX_CONFIG_USE_TINYSTL 0\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/bgfx/src/config.h > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/bgfx/src/config.h",
-
-				"gcc -isystem $(MKVFX_ROOT)/include +",
-                    "-isystem $(MKVFX_SRC_ROOT)/bx/include/compat/osx +",
-				    "-I $(MKVFX_SRC_ROOT)/bgfx/include +",
-				    "-isystem $(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos +",
-				    "-DBGFX_CONFIG_RENDERER_OPENGL=41 +",
-				    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
-				    "-c -fPIC \"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
-				"ar rs libbgfx.a amalgamated.o"
-			],
-			"install_osx": [
-				"cp /tmp/bgfx/libbgfx.a $(MKVFX_ROOT)/lib",
-				"cp -R $(MKVFX_SRC_ROOT)/bgfx/include $(MKVFX_ROOT)/include",
-				"echo bgfx built with -DBGFX_CONFIG_RENDERER_OPENGL=41 +",
-				    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS"
-			],
 			"recipe_windows": [
-                "cl /c /EHsc +",
+                "cl /c /EHsc /MD +",
                     "-I\"$(MKVFX_SRC_ROOT)/bgfx/include\" +",
                     "-I\"$(MKVFX_SRC_ROOT)/bx/include\" +",
                     "-I\"$(MKVFX_ROOT)/include\" +",
@@ -117,11 +95,27 @@
                     "-DWIN32 -DWIN64 +",
                     "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
                     "\"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
-				"lib /out:bgfx.lib \"$(MKVFX_SRC_ROOT)/bgfx/amalgamated.obj\""
+				"lib /out:bgfx.lib \"$(MKVFX_SRC_ROOT)/bgfx/amalgamated.obj\"",
+                "cl /c /EHsc /MDd +",
+                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/include\" +",
+                    "-I\"$(MKVFX_SRC_ROOT)/bx/include\" +",
+                    "-I\"$(MKVFX_ROOT)/include\" +",
+                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos\" +",
+                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/dxsdk/include\" +",
+                    "-I\"$(MKVFX_SRC_ROOT)/bx/include/compat/msvc\" +",
+                    "-I%WindowsSDK_IncludePath% +",
+                    "-DWIN32 -DWIN64 +",
+                    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
+                    "\"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
+				"lib /out:bgfx_d.lib \"$(MKVFX_SRC_ROOT)/bgfx/amalgamated.obj\"",
+                "cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/bgfx/3rdparty/glsl-optimizer\"",
+				"msbuild \"$(MKVFX_SRC_ROOT)\\bgfx\\Project.sln\" /t:glsl_optimizer /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\include\\bgfx\\*\" \"$(MKVFX_ROOT)\\include\\bgfx\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\bgfx.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y"
+                "xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\bgfx.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\bgfx_d.lib\" \"$(MKVFX_ROOT)\\lib_debug\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\Release\\glslopt.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
@@ -210,23 +204,21 @@
 		},
 		{
 			"name": "bx",
-			"platforms": ["osx", "windows"],
+			"platforms": ["windows"],
 			"dir": "bx",
 			"build_in": "$(MKVFX_SRC_ROOT)/bx",
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/bkaradzic/bx.git"
 			},
-			"recipe_osx": [ "make" ],
-			"install_osx": [
-				"cp -R $(MKVFX_SRC_ROOT)/bx/include/bx $(MKVFX_ROOT)/include/bx"
-			],
 			"recipe_windows": [
 				"\"$(MKVFX_SRC_ROOT)/bx/tools/bin/windows/genie.exe\" vs2015",
 				"msbuild \"$(MKVFX_SRC_ROOT)\\bx\\.build\\projects\\vs2015\\bx.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_windows": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\bx\\*\" \"$(MKVFX_ROOT)\\include\\bx\\\" /s /y"
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\bx\\*\" \"$(MKVFX_ROOT)\\include\\bx\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\compat\\*\" \"$(MKVFX_ROOT)\\include\\bx\\compat\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\tinystl\\*\" \"$(MKVFX_ROOT)\\include\\tinystl\\\" /s /y"
 			]
 		},
 		{

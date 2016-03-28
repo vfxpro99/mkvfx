@@ -544,7 +544,7 @@
 			"platforms": ["osx"],
 			"dir": "OpenColorIO",
 			"build_in": "$(MKVFX_BUILD_ROOT)/OpenColorIO",
-			"notes": "OpenColorIO and OpenImageIO are mutually dependent so running mkvfx twice is necessary. nev vars described here #{HOMEBREW_PREFIX}/share/ocio/setup_ocio.sh",
+			"notes": "OpenColorIO and OpenImageIO are mutually dependent so running mkvfx twice is necessary. env vars described here #{HOMEBREW_PREFIX}/share/ocio/setup_ocio.sh",
 			"dependencies": ["glew","python"],
 			"repository": {
 				"type": "git",
