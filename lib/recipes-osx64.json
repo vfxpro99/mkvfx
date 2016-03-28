@@ -139,16 +139,7 @@
 			"install_osx": [
 				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/stage-OSX/lib/*\" \"$(MKVFX_ROOT)/lib\"",
 				"cp -R \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/boost\" \"$(MKVFX_ROOT)/include/boost\""
-			],
-            "recipe_windows": [
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost-build-club\\*\" \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\\" /s /y",
-                "cmd.exe '/C build-win-shared.bat"
-            ],
-            "install_windows": [
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\boost\\*\" \"$(MKVFX_ROOT)\\include\\boost\\\" /s /y"
-            ]
+			]
 		},
 		{
 			"name": "boost-build-club",
@@ -530,6 +521,22 @@
 				"cp $(MKVFX_BUILD_ROOT)/nanovg/libnanovg.a $(MKVFX_ROOT)/lib",
 				"cp $(MKVFX_SRC_ROOT)/nanovg/src/*.h $(MKVFX_ROOT)/include",
 				"cp $(MKVFX_SRC_ROOT)/nanovg/example/stb_image_write.h $(MKVFX_ROOT)/include"
+			]
+		},
+		{
+			"name": "numpy",
+			"platforms": ["osx"],
+			"dir": "numpy",
+			"build_in": "$(MKVFX_BUILD_ROOT)/nanovg",
+			"repository": {
+				"type": "git",
+				"url": "git://github.com/numpy/numpy.git"
+			},
+			"recipe_osx": [
+				"python setup.py build"
+			],
+			"install_osx": [
+				"python setup.py install"
 			]
 		},
 		{

@@ -196,8 +196,8 @@ def check_for_make():
     if searchedForMake:
         return False
 
-	result = execTask('make --version')
-	searchedForMake = True
+    result = execTask('make --version')
+    searchedForMake = True
     foundMake = not result # because 0 means success
     return foundMake
 
