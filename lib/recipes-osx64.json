@@ -240,6 +240,25 @@
 			]
 		},
 		{
+			"name": "double-conversion",
+			"platforms": ["osx"],
+			"dir": "double-conversion",
+			"build_in": "$(MKVFX_BUILD_ROOT)/double-conversion",
+			"repository": {
+				"type": "git",
+				"url": "https://github.com/google/double-conversion.git"
+			},
+			"recipe_osx": [
+				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/double-conversion",
+				"make -j 4"
+			],
+			"install_osx": [
+				"cp \"$(MKVFX_BUILD_ROOT)/double_conversion/double-conversion/libdouble-conversion.a\" \"$(MKVFX_ROOT)/lib\"",
+				"mkdir -p $(MKVFX_ROOT)/include/double-conversion",
+				"cp \"$(MKVFX_SRC_ROOT)/double_conversion/double-conversion/\"*.h \"$(MKVFX_ROOT)/include/double-conversion\""
+			]
+		},
+		{
 			"name": "glew",
 			"platforms": ["osx"],
 			"dir": "glew",
