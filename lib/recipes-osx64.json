@@ -133,11 +133,11 @@
 				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_60_0.tar.gz"
 			},
 			"recipe_osx": [
-				"cp \"$(MKVFX_SRC_ROOT)/boost-build-club/*\" \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0\"",
+				"cp \"$(MKVFX_SRC_ROOT)/boost-build-club/\"* \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0\"",
 				"chmod 744 build-OSX.sh;./build-OSX.sh"
 			],
 			"install_osx": [
-				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/stage-OSX/lib/*\" \"$(MKVFX_ROOT)/lib\"",
+				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/stage-OSX/lib/\"* \"$(MKVFX_ROOT)/lib\"",
 				"cp -R \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/boost\" \"$(MKVFX_ROOT)/include/boost\""
 			]
 		},
