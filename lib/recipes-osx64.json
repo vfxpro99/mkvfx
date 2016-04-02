@@ -680,9 +680,21 @@
 				"make -j 4"
 			],
 			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libosdCPU.dylib $(MKVFX_ROOT)/bin/libosdCPU.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libosdGPU.dylib $(MKVFX_ROOT)/bin/libosdGPU.dylib"
+				"cp /tmp/OpenSubdiv/lib/*.a $(MKVFX_ROOT)/lib",
+				"cp /tmp/OpenSubdiv/lib/*.dylib $(MKVFX_ROOT)/lib",
+				"cp /tmp/OpenSubdiv/bin/*.dylib $(MKVFX_ROOT)/bin",
+				"mkdir $(MKVFX_ROOT)/include/opensubdiv",
+				"mkdir $(MKVFX_ROOT)/include/opensubdiv/far",
+				"mkdir $(MKVFX_ROOT)/include/opensubdiv/hbr",
+				"mkdir $(MKVFX_ROOT)/include/opensubdiv/osd",
+				"mkdir $(MKVFX_ROOT)/include/opensubdiv/sdc",
+				"mkdir $(MKVFX_ROOT)/include/opensubdiv/vtr",
+				"cp $(MKVFX_SRC_ROOT)/OpenSubdiv/opensubdiv/*.h $(MKVFX_ROOT)/include/opensubdiv",
+				"cp $(MKVFX_SRC_ROOT)/OpenSubdiv/opensubdiv/far/*.h $(MKVFX_ROOT)/include/opensubdiv/far",
+				"cp $(MKVFX_SRC_ROOT)/OpenSubdiv/opensubdiv/hbr/*.h $(MKVFX_ROOT)/include/opensubdiv/hbr",
+				"cp $(MKVFX_SRC_ROOT)/OpenSubdiv/opensubdiv/osd/*.h $(MKVFX_ROOT)/include/opensubdiv/osd",
+				"cp $(MKVFX_SRC_ROOT)/OpenSubdiv/opensubdiv/sdc/*.h $(MKVFX_ROOT)/include/opensubdiv/sdc",
+				"cp $(MKVFX_SRC_ROOT)/OpenSubdiv/opensubdiv/vtr/*.h $(MKVFX_ROOT)/include/opensubdiv/vtr"
 			]
 		},
 		{
