@@ -24,6 +24,7 @@
 				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/alembic-stage -DCMAKE_INSTALL_PREFIX=/tmp +",
 					"-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
 					"-DBOOST_LIBRARYDIR=\"$(MKVFX_ROOT)/lib\" +",
+                    "-DBoost_INCLUDE_DIR=\"$(MKVFX_ROOT)/include\" -DBoost_LIBRARY_DIR=\"$(MKVFX_ROOT)/lib\" +",
 					"-DHDF5_ROOT=\"$(MKVFX_ROOT)\" +",
 					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=\"$(MKVFX_ROOT)/lib/libPyImath.dylib\" +",
 					"-DILMBASE_ROOT=\"$(MKVFX_ROOT)\" +",
@@ -617,20 +618,25 @@
 			"platforms": ["osx"],
 			"notes": "Specify FIELD3D_HOME= when Field3d is built",
 			"dir": "OpenImageIO",
-			"build_in": "$(MKVFX_SRC_ROOT)/OpenImageIO",
-			"dependencies": [ "jpeg", "libpng", "libtiff", "OpenColorIO", "glew" ],
+			"build_in": "/tmp/OpenImageIO",
+			"dependencies": [ "boost", "jpeg", "libpng", "libtiff", "OpenColorIO", "ptex", "glew" ],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/OpenImageIO/oiio.git"
 			},
 			"recipe_osx": [
-				"mkdir -p build",
-				"cd build;cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
+				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
 					"-DCMAKE_CXX_COMPILER_WORKS=1 +",
-					"-DOPENEXR_INCLUDE_DIR=$(MKVFX_ROOT)/include +",
-					"-DOPENEXR_ILMIMF_LIBRARIES=$(MKVFX_ROOT)/lib +",
+					"-DOPENEXR_CUSTOM_INCLUDE_DIR:STRING=$(MKVFX_ROOT)/include +",
+					"-DOPENEXR_CUSTOM_LIB_DIR=$(MKVFX_ROOT)/lib +",
+                    "-DBOOST_ROOT=$(MKVFX_ROOT) +",
+                    "-DBOOST_LIBRARYDIR=$(MKVFX_ROOT)/lib +",
+                    "-DBoost_USE_STATIC_LIBS:INT=1 +",
+                    "-DBoost_LIBRARY_DIR_RELEASE=$(MKVFX_ROOT)/lib +",
+                    "-DBoost_LIBRARY_DIR_DEBUG=$(MKVFX_ROOT)/lib +",
 					"-DOCIO_PATH=$(MKVFX_ROOT) +",
-					"..",
+					"-PTEX_LOCATION=$(MKVFX_ROOT) +",
+					"$(MKVFX_SRC_ROOT)/OpenImageIO",
 				"make -j 4"
 			],
 			"install_osx": [
@@ -798,15 +804,18 @@
 			"name": "ptex",
 			"platforms": ["osx"],
 			"dir": "ptex",
-			"build_in": "$(MKVFX_SRC_ROOT)/ptex",
+			"build_in": "/tmp/ptex",
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/wdas/ptex.git"
 			},
 			"recipe": [
-				"cd $(MKVFX_SRC_ROOT)/ptex/src;make INSTALLDIR='$(MKVFX_ROOT)'"
+				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/ptex",
+				"make -j 4"
 			],
-			"install_osx": []
+			"install_osx": [
+				"make install"
+			]
 		},
 		{
 			"name": "PyIlmBase",
@@ -824,7 +833,8 @@
 				"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt > $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp",
                 "rm $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
                 "mv $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
-				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase",
+				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase +",
+                    "-DBoost_INCLUDE_DIR=\"$(MKVFX_ROOT)/include\" -DBoost_LIBRARY_DIR=\"$(MKVFX_ROOT)/lib\"",
 				"make -j 4"
 			],
 			"recipe_windows": [
