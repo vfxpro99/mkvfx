@@ -67,7 +67,7 @@ if args.nofetch or args.nfd:
 if args.nobuild:
     option_do_build = 0
 if args.nodependencies or args.nfd:
-    option_do_dependencies = 1
+    option_do_dependencies = 0
 if args.noinstall:
     option_do_install = 0
 if args.all:
