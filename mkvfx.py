@@ -1,4 +1,4 @@
-#! python
+#! /usr/bin/python
 #
 # * mkvfx
 # * https://github.com/meshula/mkvfx
@@ -26,6 +26,7 @@ option_do_build = 1
 option_do_install = 1
 option_do_dependencies = 1
 option_build_all = 0
+option_force_build = 0
 
 #-----------------------------------------------------
 # Build management
@@ -60,6 +61,7 @@ cl_parser.add_argument('-nd', '--nodependencies', dest='nodependencies', action=
 cl_parser.add_argument('-nfd', dest='nfd', action='store_const', const=1, default=0, help="don't fetch repository or process dependencies")
 cl_parser.add_argument('-ni', '--noinstall', dest='noinstall', action='store_const', const=1, default=0, help="don't install")
 cl_parser.add_argument('-a', '--all', dest='all', action='store_const', const=1, default=0, help="process everything in the recipe file")
+cl_parser.add_argument('--force', dest='force', action='store_const', const=1, default=0, help="force rebuild")
 args = cl_parser.parse_args()
 
 if args.nofetch or args.nfd:
@@ -72,7 +74,8 @@ if args.noinstall:
     option_do_install = 0
 if args.all:
     option_build_all = 1
-
+if args.force:
+    option_force_build = 1
 
 #-----------------------------------------------------
 # Platform detection
@@ -393,7 +396,7 @@ def bake(package_name):
     global lower_case_map
 
     print "Baking", package_name
-    if package_name in built_packages:
+    if (not option_force_build) and package_name in built_packages:
         print package_name, "already built"
         return
 

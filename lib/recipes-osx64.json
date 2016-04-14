@@ -275,7 +275,7 @@
 			],
 			"install_osx": [
 				"make -C $(MKVFX_SRC_ROOT)/glew GLEW_DEST='$(MKVFX_ROOT)' install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libGLEW.dylib $(MKVFX_ROOT)/bin/libGLEW.dylib"
+				"cp $(MKVFX_ROOT)/lib/libGLEW.dylib $(MKVFX_ROOT)/bin/libGLEW.dylib"
 			]
 		},
 		{
@@ -360,10 +360,6 @@
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/IlmBase",
 				"make -j 4"
 			],
-			"recipe_windows": [
-				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/IlmBase\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmBase.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
-			],
 			"install_osx": [
 				"make install",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIex-2_2.dylib $(MKVFX_ROOT)/lib/libIex.dylib",
@@ -380,26 +376,6 @@
 				"ln -s -f $(MKVFX_ROOT)/lib/libIex.dylib $(MKVFX_ROOT)/bin/libIex.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libImath.dylib $(MKVFX_ROOT)/bin/libImath.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath.dylib $(MKVFX_ROOT)/bin/libIexMath.dylib"
-			],
-			"install_windows": [
-				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_ROOT)\\include\\OpenEXR'\"",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\config\\*\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\Half\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\Iex\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\IexMath\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\IlmThread\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\OpenEXR\\IlmBase\\Imath\\*.h\" \"$(MKVFX_ROOT)\\include\\OpenEXR\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\Release\\Half.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\Release\\Half.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Iex\\Release\\Iex-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Iex\\Release\\Iex-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IexMath\\Release\\IexMath-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IexMath\\Release\\IexMath-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Imath\\Release\\Imath-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Imath\\Release\\Imath-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\IlmThread-2_2.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\IlmThread-2_2.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
@@ -546,8 +522,9 @@
 		{
 			"name": "numpy",
 			"platforms": ["osx"],
+			"dependencies": ["python"],
 			"dir": "numpy",
-			"build_in": "$(MKVFX_BUILD_ROOT)/nanovg",
+			"build_in": "$(MKVFX_SRC_ROOT)/numpy",
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/numpy/numpy.git"
@@ -556,7 +533,9 @@
 				"python setup.py build"
 			],
 			"install_osx": [
-				"python setup.py install"
+				"python setup.py install --user",
+				"cp -R $(MKVFX_SRC_ROOT)/numpy/numpy/core/include/numpy $(MKVFX_ROOT)/include/numpy",
+				"cp $(MKVFX_SRC_ROOT)/numpy/build/src.macosx-10.12-intel-2.7/numpy/core/include/numpy/* $(MKVFX_ROOT)/include/numpy"
 			]
 		},
 		{
@@ -627,6 +606,7 @@
 			"recipe_osx": [
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
 					"-DCMAKE_CXX_COMPILER_WORKS=1 +",
+                    "-DUSE_FFMPEG=0 -DUSE_FREETYPE=0 -DUSE_OPENCV=0 -DUSE_FIELD3D=0 +",
 					"-DOPENEXR_CUSTOM_INCLUDE_DIR:STRING=$(MKVFX_ROOT)/include +",
 					"-DOPENEXR_CUSTOM_LIB_DIR=$(MKVFX_ROOT)/lib +",
                     "-DBOOST_ROOT=$(MKVFX_ROOT) +",
@@ -635,7 +615,8 @@
                     "-DBoost_LIBRARY_DIR_RELEASE=$(MKVFX_ROOT)/lib +",
                     "-DBoost_LIBRARY_DIR_DEBUG=$(MKVFX_ROOT)/lib +",
 					"-DOCIO_PATH=$(MKVFX_ROOT) +",
-					"-PTEX_LOCATION=$(MKVFX_ROOT) +",
+					"-DPTEX_LOCATION=$(MKVFX_ROOT) +",
+					"-DVERBOSE=1 +",
 					"$(MKVFX_SRC_ROOT)/OpenImageIO",
 				"make -j 4"
 			],
