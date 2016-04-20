@@ -563,7 +563,7 @@
 		},
 		{
 			"name": "OpenColorIO",
-			"platforms": ["osx"],
+			"platforms": ["windows"],
 			"dir": "OpenColorIO",
 			"build_in": "$(MKVFX_BUILD_ROOT)/OpenColorIO",
 			"notes": "OpenColorIO and OpenImageIO are mutually dependent so running mkvfx twice is necessary. nev vars described here #{HOMEBREW_PREFIX}/share/ocio/setup_ocio.sh",
@@ -572,18 +572,17 @@
 				"type": "git",
 				"url": "git://github.com/imageworks/OpenColorIO.git"
 			},
-			"recipe_osx": [
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenColorIO -DCMAKE_VERBOSE_MAKEFILE=OFF",
-				"make -j 4"
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DOCIO_BUILD_APPS=OFF -DOCIO_BUILD_TRUELIGHT=OFF +",
+					"-DNDEBUG-DOCIO_BUILD_NUKE=OFF -DOCIO_BUILD_DOCS=OFF -DOCIO_BUILD_TESTS=OFF \"$(MKVFX_SRC_ROOT)/OpenColorIO\"",
 			],
-			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libOpenColorIO.dylib $(MKVFX_ROOT)/bin/libOpenColorIO.dylib"
+			"install_windows": [
+				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenColorIO\\opencolorio.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			]
 		},
 		{
 			"name": "OpenEXR",
-			"platforms": ["osx", "windows"],
+			"platforms": ["windows"],
 			"notes": "Namespaced dylibs must be symlinked to the base names",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/OpenEXR",
@@ -593,10 +592,6 @@
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
 			},
-			"recipe_osx": [
-				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR",
-				"make -j 4"
-			],
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DILMBASE_PACKAGE_PREFIX=\"$(MKVFX_ROOT)\" -DZLIB_LIBRARY=\"$(MKVFX_ROOT)\\lib\\zlibstatic.lib\" -DZLIB_INCLUDE_DIR=\"$(MKVFX_ROOT)\\include\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR\"",
 				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release'\"",
@@ -605,14 +600,7 @@
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\*.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\openexr.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
-			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImf.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImfUtil-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImfUtil.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf.dylib $(MKVFX_ROOT)/bin/libIlmImf.dylib"
-			],
 			"install_windows": [
-
 			]
 		},
 		{

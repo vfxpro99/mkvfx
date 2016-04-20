@@ -474,8 +474,7 @@
 				"make -j 4"
 			],
 			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libtiff.dylib $(MKVFX_ROOT)/bin/libtiff.dylib"
+				"make install"
 			]
 		},
 		{
@@ -607,6 +606,7 @@
 				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
 					"-DCMAKE_CXX_COMPILER_WORKS=1 +",
                     "-DUSE_FFMPEG=0 -DUSE_FREETYPE=0 -DUSE_OPENCV=0 -DUSE_FIELD3D=0 +",
+                    "-DUSE_JPEGTURBO=0 -DJPEG_LOCATION=$(MKVFX_ROOT) +",
 					"-DOPENEXR_CUSTOM_INCLUDE_DIR:STRING=$(MKVFX_ROOT)/include +",
 					"-DOPENEXR_CUSTOM_LIB_DIR=$(MKVFX_ROOT)/lib +",
                     "-DBOOST_ROOT=$(MKVFX_ROOT) +",
@@ -621,9 +621,7 @@
 				"make -j 4"
 			],
 			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libOpenImageIO.dylib $(MKVFX_ROOT)/bin/libOpenImageIO.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libOpenImageIO_Util.dylib $(MKVFX_ROOT)/bin/libOpenImageIO_Util.dylib"
+				"make install"
 			]
 		},
 		{
@@ -973,12 +971,11 @@
 			],
 			"install_osx": [
 				"cp $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/build/macos_intel64_*_release/*.dylib $(MKVFX_ROOT)/lib",
+				"install_name_tool -id @rpath/libtbb.dylib $(MKVFX_ROOT)/lib/libtbb.dylib",
+				"install_name_tool -id @rpath/libtbbmalloc.dylib $(MKVFX_ROOT)/lib/libtbbmalloc.dylib",
+				"install_name_tool -id @rpath/libtbbmalloc_proxy.dylib $(MKVFX_ROOT)/lib/libtbbmalloc_proxy.dylib",
 				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/serial $(MKVFX_ROOT)/include/serial",
-				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/tbb $(MKVFX_ROOT)/include/tbb",
-
-				"ln -s -f $(MKVFX_ROOT)/lib/libtbb.dylib $(MKVFX_ROOT)/bin/libtbb.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc.dylib $(MKVFX_ROOT)/bin/libtbbmalloc.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc_proxy.dylib $(MKVFX_ROOT)/bin/libtbbmalloc_proxy.dylib"
+				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/tbb $(MKVFX_ROOT)/include/tbb"
 			]
 		}
 	]
