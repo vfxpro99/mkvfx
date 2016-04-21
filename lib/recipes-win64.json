@@ -574,7 +574,7 @@
 			},
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DOCIO_BUILD_APPS=OFF -DOCIO_BUILD_TRUELIGHT=OFF +",
-					"-DNDEBUG-DOCIO_BUILD_NUKE=OFF -DOCIO_BUILD_DOCS=OFF -DOCIO_BUILD_TESTS=OFF \"$(MKVFX_SRC_ROOT)/OpenColorIO\"",
+					"-DNDEBUG-DOCIO_BUILD_NUKE=OFF -DOCIO_BUILD_DOCS=OFF -DOCIO_BUILD_TESTS=OFF \"$(MKVFX_SRC_ROOT)/OpenColorIO\""
 			],
 			"install_windows": [
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenColorIO\\opencolorio.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
