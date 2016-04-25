@@ -13,41 +13,41 @@
 			"recipe_osx": [
 				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\")'$'\\n' +",
 			    	"$(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp",
-                "rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
-                "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
+				"rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
+				"mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAlembic/CMakeLists.txt",
 
 				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\" -Wdeprecated-register)'$'\\n' +",
 					"$(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt > $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp",
-                "rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
-                "mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
+				"rm $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
+				"mv $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/xxx.tmp $(MKVFX_SRC_ROOT)/Alembic/python/PyAbcOpenGL/CMakeLists.txt",
 
 				"cmake -DUSE_PYILMBASE=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/alembic-stage -DCMAKE_INSTALL_PREFIX=/tmp +",
-                    "-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
-                    "-DBOOST_LIBRARYDIR=\"$(MKVFX_ROOT)/lib\" +",
-                    "-DHDF5_ROOT=\"$(MKVFX_ROOT)\" +",
-                    "-DALEMBIC_PYILMBASE_PYIMATH_LIB=\"$(MKVFX_ROOT)/lib/libPyImath.dylib\" +",
-                    "-DILMBASE_ROOT=\"$(MKVFX_ROOT)\" +",
-                    "-DALEMBIC_PYILMBASE_ROOT=\"$(MKVFX_ROOT)\" ",
+					"-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
+					"-DBOOST_LIBRARYDIR=\"$(MKVFX_ROOT)/lib\" +",
+					"-DHDF5_ROOT=\"$(MKVFX_ROOT)\" +",
+					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=\"$(MKVFX_ROOT)/lib/libPyImath.dylib\" +",
+					"-DILMBASE_ROOT=\"$(MKVFX_ROOT)\" +",
+					"-DALEMBIC_PYILMBASE_ROOT=\"$(MKVFX_ROOT)\" ",
 				"make -j 4"
 			],
 			"install_osx": [
 				"make install",
-                "cp -R /tmp/alembic-1.5.8/include $(MKVFX_ROOT)",
-                "cp -R /tmp/alembic-1.5.8/lib $(MKVFX_ROOT)"
+				"cp -R /tmp/alembic-1.5.8/include $(MKVFX_ROOT)",
+				"cp -R /tmp/alembic-1.5.8/lib $(MKVFX_ROOT)"
 			],
-            "recipe_windows": [
-                "cmake -G \"Visual Studio 14 2015 Win64\" +",
-                    "-DUSE_PYILMBASE=1 +",
-                    "-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" +",
+					"-DUSE_PYILMBASE=1 +",
+					"-DBOOST_INCLUDEDIR=\"$(MKVFX_ROOT)/include\" +",
 					"-DBOOST_LIBRARYDIR=\"$(MKVFX_ROOT)/lib\" +",
 					"-DHDF5_ROOT=\"$(MKVFX_ROOT)\" +",
-                    "-DZLIB_LIBRARY=\"$(MKVFX_ROOT)\\lib\\zlibstatic.lib\" +",
-                    "-DZLIB_INCLUDE_DIR=\"$(MKVFX_ROOT)\\include\" +",
+					"-DZLIB_LIBRARY=\"$(MKVFX_ROOT)\\lib\\zlibstatic.lib\" +",
+					"-DZLIB_INCLUDE_DIR=\"$(MKVFX_ROOT)\\include\" +",
 					"-DALEMBIC_PYILMBASE_PYIMATH_LIB=\"$(MKVFX_ROOT)/lib/libPyImath.dylib\" +",
 					"-DILMBASE_ROOT=\"$(MKVFX_ROOT)\" +",
 					"-DALEMBIC_PYILMBASE_ROOT=\"$(MKVFX_ROOT)\" "
-            ],
-            "install_windows": []
+			],
+			"install_windows": []
 		},
 		{
 			"name": "assimp",
@@ -84,45 +84,45 @@
 				"url": "git://github.com/bkaradzic/bgfx.git"
 			},
 			"recipe_windows": [
-                "cl /c /EHsc /MD +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/include\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bx/include\" +",
-                    "-I\"$(MKVFX_ROOT)/include\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/dxsdk/include\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bx/include/compat/msvc\" +",
-                    "-I%WindowsSDK_IncludePath% +",
-                    "-DWIN32 -DWIN64 +",
-                    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
-                    "\"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
+				"cl /c /EHsc /MD +",
+					"-I\"$(MKVFX_SRC_ROOT)/bgfx/include\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bx/include\" +",
+					"-I\"$(MKVFX_ROOT)/include\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/dxsdk/include\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bx/include/compat/msvc\" +",
+					"-I%WindowsSDK_IncludePath% +",
+					"-DWIN32 -DWIN64 +",
+					"-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
+					"\"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
 				"lib /out:bgfx.lib \"$(MKVFX_SRC_ROOT)/bgfx/amalgamated.obj\"",
-                "cl /c /EHsc /MDd +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/include\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bx/include\" +",
-                    "-I\"$(MKVFX_ROOT)/include\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/dxsdk/include\" +",
-                    "-I\"$(MKVFX_SRC_ROOT)/bx/include/compat/msvc\" +",
-                    "-I%WindowsSDK_IncludePath% +",
-                    "-DWIN32 -DWIN64 +",
-                    "-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
-                    "\"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
+				"cl /c /EHsc /MDd +",
+					"-I\"$(MKVFX_SRC_ROOT)/bgfx/include\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bx/include\" +",
+					"-I\"$(MKVFX_ROOT)/include\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/khronos\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bgfx/3rdParty/dxsdk/include\" +",
+					"-I\"$(MKVFX_SRC_ROOT)/bx/include/compat/msvc\" +",
+					"-I%WindowsSDK_IncludePath% +",
+					"-DWIN32 -DWIN64 +",
+					"-DBX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1 -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS +",
+					"\"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
 				"lib /out:bgfx_d.lib \"$(MKVFX_SRC_ROOT)/bgfx/amalgamated.obj\"",
-                "cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/bgfx/3rdparty/glsl-optimizer\"",
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/bgfx/3rdparty/glsl-optimizer\"",
 				"msbuild \"$(MKVFX_SRC_ROOT)\\bgfx\\Project.sln\" /t:glsl_optimizer /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\include\\bgfx\\*\" \"$(MKVFX_ROOT)\\include\\bgfx\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\bgfx.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\bgfx_d.lib\" \"$(MKVFX_ROOT)\\lib_debug\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\Release\\glslopt.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\bgfx.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\bgfx_d.lib\" \"$(MKVFX_ROOT)\\lib_debug\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\Release\\glslopt.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
 			"name": "boost",
 			"platforms": ["osx", "windows"],
 			"dir": "boost",
-            "notes": "building boost 1.60 for vs2014 compatibility, 1.57 is minimum for OSX, 1.55 is vfxplatform",
+			"notes": "building boost 1.60 for vs2014 compatibility, 1.57 is minimum for OSX, 1.55 is vfxplatform",
 			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_60_0",
 			"dependencies": [ "boost-build-club" ],
 			"repository": {
@@ -137,15 +137,15 @@
 				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/stage-OSX/lib/*\" \"$(MKVFX_ROOT)/lib\"",
 				"cp -R \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/boost\" \"$(MKVFX_ROOT)/include/boost\""
 			],
-            "recipe_windows": [
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost-build-club\\*\" \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\\" /s /y",
-                "cmd.exe '/C build-win-shared.bat"
-            ],
-            "install_windows": [
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\boost\\*\" \"$(MKVFX_ROOT)\\include\\boost\\\" /s /y"
-            ]
+			"recipe_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost-build-club\\*\" \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\\" /s /y",
+				"cmd.exe '/C build-win-shared.bat"
+			],
+			"install_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\boost\\*\" \"$(MKVFX_ROOT)\\include\\boost\\\" /s /y"
+			]
 		},
 		{
 			"name": "boost-build-club",
@@ -217,8 +217,8 @@
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\bx\\*\" \"$(MKVFX_ROOT)\\include\\bx\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\compat\\*\" \"$(MKVFX_ROOT)\\include\\bx\\compat\\\" /s /y",
-                "xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\tinystl\\*\" \"$(MKVFX_ROOT)\\include\\tinystl\\\" /s /y"
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\compat\\*\" \"$(MKVFX_ROOT)\\include\\bx\\compat\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\tinystl\\*\" \"$(MKVFX_ROOT)\\include\\tinystl\\\" /s /y"
 			]
 		},
 		{
@@ -358,13 +358,13 @@
 			"install_osx": [
 				"make install"
 			],
-            "recipe_windows": [
-                "cmake -G \"Visual Studio 14 2015 Win64\" +",
-                    "-DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/hdf5\""
-            ],
-            "install_windows": [
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" +",
+					"-DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/hdf5\""
+			],
+			"install_windows": [
 
-            ]
+			]
 		},
 		{
 			"name": "IlmBase",
@@ -574,7 +574,7 @@
 			},
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DOCIO_BUILD_APPS=OFF -DOCIO_BUILD_TRUELIGHT=OFF +",
-					"-DNDEBUG-DOCIO_BUILD_NUKE=OFF -DOCIO_BUILD_DOCS=OFF -DOCIO_BUILD_TESTS=OFF \"$(MKVFX_SRC_ROOT)/OpenColorIO\"",
+					"-DNDEBUG-DOCIO_BUILD_NUKE=OFF -DOCIO_BUILD_DOCS=OFF -DOCIO_BUILD_TESTS=OFF \"$(MKVFX_SRC_ROOT)/OpenColorIO\""
 			],
 			"install_windows": [
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenColorIO\\opencolorio.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
@@ -601,6 +601,14 @@
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\openexr.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
 			],
 			"install_windows": [
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\\IlmImf*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\\IlmImf*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrenvmap\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrheader\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrmakepreview\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrmultipart\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrmultiview\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrstdattr\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
 		},
 		{
@@ -801,8 +809,8 @@
 			"recipe_osx": [
 				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\")'$'\\n' +",
 				"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt > $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp",
-                "rm $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
-                "mv $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
+				"rm $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
+				"mv $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
 				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase",
 				"make -j 4"
 			],
@@ -887,27 +895,27 @@
 				"make install"
 			]
 		},
-        {
-            "name": "sdl2",
-            "platforms": ["windows"],
-            "dir": "sdl2",
-            "notes": "Building from github mirror",
-            "build_in": "$(MKVFX_BUILD_ROOT)/sdl2",
-            "repository": {
-                "type": "git",
-                "url": "https://github.com/spurious/SDL-mirror.git"
-            },
-            "recipe_windows": [
-                "cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)\\sdl2\"",
+		{
+			"name": "sdl2",
+			"platforms": ["windows"],
+			"dir": "sdl2",
+			"notes": "Building from github mirror",
+			"build_in": "$(MKVFX_BUILD_ROOT)/sdl2",
+			"repository": {
+				"type": "git",
+				"url": "https://github.com/spurious/SDL-mirror.git"
+			},
+			"recipe_windows": [
+				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)\\sdl2\"",
 				"msbuild \"$(MKVFX_BUILD_ROOT)\\sdl2\\sdl2.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
-            ],
-            "install_windows": [
-                "xcopy \"$(MKVFX_SRC_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
-                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
-                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.lib\" \"$(MKVFX_ROOT)\\lib\" /s /y",
-                "xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.dll\" \"$(MKVFX_ROOT)\\bin\" /s /y"
-            ]
-        },
+			],
+			"install_windows": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.lib\" \"$(MKVFX_ROOT)\\lib\" /s /y",
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.dll\" \"$(MKVFX_ROOT)\\bin\" /s /y"
+			]
+		},
 		{
 			"name": "sqlite",
 			"platforms": ["osx"],
