@@ -154,7 +154,7 @@
 			"build_in": "$(MKVFX_SRC_ROOT)/boost-build-club",
 			"repository": {
 				"type": "git",
-				"url": "https://github.com/meshula/boost-build-club.git"
+				"url": "https://github.com/vfxpro99/boost-build-club.git"
 			},
 			"recipe": [],
 			"install": []
@@ -250,7 +250,7 @@
 			"dir": "glew-build-club",
 			"repository": {
 				"type": "git",
-				"url": "https://github.com/meshula/glew-build-club.git"
+				"url": "https://github.com/vfxpro99/glew-build-club.git"
 			},
 			"recipe": [],
 			"install": []
@@ -348,7 +348,7 @@
 			"build_in": "$(MKVFX_BUILD_ROOT)/hdf5",
 			"repository": {
 				"type": "git",
-				"url": "git://github.com/meshula/hdf5.git"
+				"url": "git://github.com/vfxpro99/hdf5.git"
 			},
 			"recipe_osx": [
 				"cmake -DHDF5_BUILD_HL_LIB=1 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=/tmp/hdf5-stage -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/hdf5",

@@ -17,7 +17,7 @@ if [ ! -f local/lib/libhdf5.a ]; then
   ROOT=$(pwd)
   cd prereq
   if [ ! -f hdf5/.git/config ]; then
-    git clone git://github.com/meshula/hdf5.git
+    git clone git://github.com/vfxpro99/hdf5.git
   else
     cd hdf5; git pull; cd ..
   fi

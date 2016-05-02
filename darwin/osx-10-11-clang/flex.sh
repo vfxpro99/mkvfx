@@ -17,7 +17,7 @@ ROOT=$(pwd)
 pushd prereq
 
 if [ ! -f flex-2.5.39/.git/config ]; then
-  git clone https://github.com/meshula/flex-2.5.39.git
+  git clone https://github.com/vfxpro99/flex-2.5.39.git
 else
   cd flex-2.5.39; git pull; cd ..
 fi

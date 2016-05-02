@@ -1,5 +1,5 @@
 cd prereq
-git clone https://github.com/meshula/boost-build-club.git
+git clone https://github.com/vfxpro99/boost-build-club.git
 
 powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://downloads.sourceforge.net/sourceforge/boost/boost_1_60_0.tar.gz', 'boost.tar.gz')"
 7z x boost.tar.gz

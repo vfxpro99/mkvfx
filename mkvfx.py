@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #
 # * mkvfx
-# * https://github.com/meshula/mkvfx
+# * https://github.com/vfxpro99/mkvfx
 # *
 # * Copyright 2016 Nick Porcino
 # * Licensed under the BSD 2 clause license.

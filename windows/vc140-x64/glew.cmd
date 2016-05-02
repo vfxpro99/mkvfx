@@ -1,6 +1,6 @@
 SET current=%cd%
 cd prereq
-git clone https://github.com/meshula/glew-build-club.git
+git clone https://github.com/vfxpro99/glew-build-club.git
 cd ..
 xcopy .\prereq\glew-build-club\include\GL\*.* .\local\include\GL\ /s /y
 cd .\prereq\glew-build-club

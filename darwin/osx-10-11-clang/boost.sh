@@ -17,7 +17,7 @@ if [ ! -f local/lib/libboost_python.a ]; then
   ROOT=$(pwd)
   cd prereq
   if [ ! -f boost-build-club/.git/config ]; then
-     git clone https://github.com/meshula/boost-build-club.git
+     git clone https://github.com/vfxpro99/boost-build-club.git
   else
     cd boost-build-club; git pull; cd ..
   fi
