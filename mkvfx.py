@@ -141,6 +141,8 @@ foundMake = False
 searchedForPremake = False
 foundPremake4 = False
 foundPremake5 = False
+foundChocolately = False
+searchedForChocolately = False
 
 def substitute_variables(subst):
     global mkvfx_root, mkvfx_source_root, mkvfx_build_root
@@ -239,6 +241,19 @@ def check_for_premake():
     searchedForPremake = True
     return foundPremake4 and foundPremake5
 
+def check_for_chocolately():
+    global foundChocolately, searchedForChocolately
+
+    if build_platform != "windows":
+        return True
+
+    if foundChocolately or searchedForChocolately:
+        return True
+
+    foundChocolately = not execTask('choco')
+    searchedForChocolately = True
+
+
 def create_directory(path):
     exists = os.path.exists(path)
     if not os.path.isdir(path):
@@ -299,6 +314,11 @@ def validate_tool_chain():
         if not foundPremake5:
             print "MKVFX could not find premake5. Build steps requiring premake5 will fail.\n"
         print "Premake is available from here: http://industriousone.com/premake/download\n"
+        #sys.exit(1)
+
+    if not check_for_chocolately():
+        print "MKVFX could not find chocolately, plese install it and try again\n"
+        print "chocolately is available here: https://chocolatey.org/"
         #sys.exit(1)
 
     print "Validation complete"
