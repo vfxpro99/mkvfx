@@ -1,11 +1,6 @@
 
 #! /bin/sh
 
-# Ask for the administrator password upfront so qmake can be copied at the end,
-# and then keep alive by updating the existing sudo time stamp until finished
-sudo -v
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
 if [ ! -f prereq ]; then
   mkdir -p prereq
 fi

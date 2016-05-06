@@ -40,3 +40,6 @@ xcopy .\prereq\openexr\build_win\OpenEXR\exrmakepreview\Release\*.exe .\local\bi
 xcopy .\prereq\openexr\build_win\OpenEXR\exrmultipart\Release\*.exe .\local\bin\ /s /y
 xcopy .\prereq\openexr\build_win\OpenEXR\exrmultiview\Release\*.exe .\local\bin\ /s /y
 xcopy .\prereq\openexr\build_win\OpenEXR\exrstdattr\Release\*.exe .\local\bin\ /s /y
+
+xcopy .\prereq\openexr\OpenEXR\IlmImf\*.h .\local\include\OpenEXR\ /s /y
+

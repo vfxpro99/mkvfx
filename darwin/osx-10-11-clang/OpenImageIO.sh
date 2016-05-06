@@ -1,6 +1,6 @@
 #! /bin/sh
 
-if [ ! -f local/lib/libOpenColorIO.a ]; then
+if [ ! -f local/lib/libOpenImageIO.a ]; then
   if [ ! -f prereq ]; then
     mkdir -p prereq
   fi

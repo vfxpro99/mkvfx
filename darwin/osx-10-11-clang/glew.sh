@@ -28,4 +28,6 @@ if [ ! -f local/lib/libGLEW.a ]; then
   make -C ${ROOT}/prereq/glew GLEW_DEST=${ROOT}/local install
   cd ${ROOT}
 
+  install_name_tool -id @rpath/libGLEW.2.0.0.dylib ./local/lib/libGLEW.2.0.0.dylib
+
 fi

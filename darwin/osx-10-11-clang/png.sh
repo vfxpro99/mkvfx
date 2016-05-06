@@ -21,8 +21,14 @@ if [ ! -f local/lib/libpng.a ]; then
   else
     cd libpng; git pull; cd ..
   fi
-  cd libpng;mkdir build;cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${ROOT}/local ..
+  cd libpng;
+  # checkout last known good on OSX
+  git checkout 830608b
+  mkdir build;cd build
+  cmake \
+        -DPNG_TESTS=OFF \
+        -DCMAKE_PREFIX_PATH=${ROOT}/local \
+        -DCMAKE_INSTALL_PREFIX=${ROOT}/local ..
   make -j 4
   make install
 

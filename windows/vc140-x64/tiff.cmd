@@ -11,3 +11,4 @@ msbuild tiff.sln /t:Build /p:Configuration=Release /p:Platform=x64
 cd %current%
 xcopy .\prereq\libtiff\build_win\libtiff\Release\tiff.* .\local\lib\ /s /y
 xcopy .\prereq\libtiff\libtiff\tiff*.h .\local\include\ /s /y
+xcopy .\prereq\libtiff\build_win\libtiff\tif*.h .\local\include\ /s /y
