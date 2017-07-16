@@ -65,7 +65,7 @@
 					"-DDirectX_D3DX9_LIBRARY=\"%WINDOWSSDKDIR%Lib\\%WINDOWSSDKVERSION%um\\x86\\d3d9.lib\" +",
 					"-DDirectX_INCLUDE_DIR=\"%WINDOWSSDKDIR%Include\\%WINDOWSSDKVERSION%um\" +",
 					"-DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/assimp\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\assimp\\assimp.sln\" /t:assimp /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\assimp\\include\\assimp\" \"$(MKVFX_ROOT)\\include\\assimp\\\" /s /y",
@@ -109,7 +109,7 @@
 					"\"$(MKVFX_SRC_ROOT)/bgfx/src/amalgamated.cpp\"",
 				"lib /out:bgfx_d.lib \"$(MKVFX_SRC_ROOT)/bgfx/amalgamated.obj\"",
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/bgfx/3rdparty/glsl-optimizer\"",
-				"msbuild \"$(MKVFX_SRC_ROOT)\\bgfx\\Project.sln\" /t:glsl_optimizer /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\bgfx\\include\\bgfx\\*\" \"$(MKVFX_ROOT)\\include\\bgfx\\\" /s /y",
@@ -257,7 +257,22 @@
 		},
 		{
 			"name": "glew",
-			"platforms": ["osx", "windows"],
+			"platforms": ["windows"],
+			"dir": "glew",
+			"repository": {
+				"type" : "zip",
+				"url": "http://downloads.sourceforge.net/project/glew/glew/2.0.0/glew-2.0.0-win32.zip"
+			},
+			"recipe": [],
+			"install": [
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-2.0.0\\lib\\Release\\x64\\glew32.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-2.0.0\\bin\\Release\\x64\\glew32.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-2.0.0\\include\\GL\\*\" \"$(MKVFX_ROOT)\\include\\GL\\\" /s /y"
+			]
+		},
+		{
+			"name": "glewx",
+			"platforms": ["windows"],
 			"dir": "glew",
 			"dependencies_windows": ["glew-build-club"],
 			"build_in": "$(MKVFX_SRC_ROOT)/glew",
@@ -266,14 +281,6 @@
 				"type": "git",
 				"url": "https://github.com/nigels-com/glew.git"
 			},
-			"recipe_osx": [
-				"make -C $(MKVFX_SRC_ROOT)/glew extensions",
-				"make -C $(MKVFX_SRC_ROOT)/glew all"
-			],
-			"install_osx": [
-				"make -C $(MKVFX_SRC_ROOT)/glew GLEW_DEST='$(MKVFX_ROOT)' install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libGLEW.dylib $(MKVFX_ROOT)/bin/libGLEW.dylib"
-			],
 			"recipe_windows": [
 			],
 			"install_windows": [
@@ -311,7 +318,7 @@
 			],
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/glfw\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\glfw\\GLFW.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\glfw\\include\\GLFW\\*\" \"$(MKVFX_ROOT)\\include\\GLFW\\\" /s /y",
@@ -382,7 +389,7 @@
 			],
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/IlmBase\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmBase.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_osx": [
 				"make install",
@@ -423,41 +430,6 @@
 			]
 		},
 		{
-			"name": "jpeg",
-			"platforms": ["osx"],
-			"dir": "jpeg",
-			"build_in": "$(MKVFX_SRC_ROOT)/jpeg/jpeg-6b",
-			"repository": {
-				"type": "curl-tgz",
-				"url": "http://www.ijg.org/files/jpegsrc.v6b.tar.gz"
-			},
-			"recipe_osx": [
-				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install",
-				"make install-lib"
-			]
-		},
-		{
-			"name": "jsoncpp",
-			"platforms": ["osx"],
-			"dir": "jsoncpp",
-			"build_in": "/tmp/jsoncpp",
-			"repository": {
-				"type": "git",
-				"url": "https://github.com/open-source-parsers/jsoncpp.git"
-			},
-			"recipe": [
-				"cmake -DCMAKE_BUILD_TYPE=release -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/jsoncpp",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install"
-			]
-		},
-		{
 			"name": "LabText",
 			"platforms": ["windows"],
 			"dir": "LabText",
@@ -482,86 +454,6 @@
 			]
 		},
 		{
-			"name": "libpng",
-			"platforms": ["osx"],
-			"notes": "libpng builds static on OSX to avoid conflict with CoreImage",
-			"dir": "libpng",
-			"build_in": "$(MKVFX_SRC_ROOT)/libpng",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/glennrp/libpng.git"
-			},
-			"recipe_osx": [
-				"cmake -DBUILDSTATIC=1 -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/libpng",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install",
-				"echo removing libpng dylibs because of fatal CoreImage conflicts, this forcing static libpng linkage",
-				"rm $(MKVFX_ROOT)/lib/libpng*.dylib"
-			]
-		},
-		{
-			"name": "libtiff",
-			"platforms": ["osx"],
-			"notes": "disabled C++ extensions because they don't compile",
-			"dir": "libtiff",
-			"build_in": "$(MKVFX_SRC_ROOT)/libtiff",
-			"repository": {
-				"type": "git",
-				"url": "https://github.com/vadz/libtiff"
-			},
-			"recipe_osx": [
-				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT) --enable-cxx=0",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libtiff.dylib $(MKVFX_ROOT)/bin/libtiff.dylib"
-			]
-		},
-		{
-			"name": "llvm",
-			"platforms": ["osx"],
-			"dir": "llvm",
-			"build_in": "$(MKVFX_BUILD_ROOT)/llvm",
-			"notes": "using release_35 to match OSX system clang",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/llvm-mirror/llvm.git",
-				"branch": "release_35"
-			},
-			"recipe_osx": [
-				"cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=\"X86\" -DLLVM_REQUIRES_RTTI=ON +",
-				" -DLLVM_OPTIMIZED_TABLEGEN=On -DCMAKE_CXX_FLAGS_RELEASE='-DNDEBUG' +",
-				" -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/llvm",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install"
-			]
-		},
-		{
-			"name": "nanovg",
-			"platforms": ["osx"],
-			"dir": "nanovg",
-			"build_in": "$(MKVFX_BUILD_ROOT)/nanovg",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/memononen/nanovg.git"
-			},
-			"recipe_osx": [
-				"cp $(MKVFX_SRC_ROOT)/stb/stb_image.h $(MKVFX_SRC_ROOT)/nanovg/src/stb_image.h",
-				"gcc -c -fPIC $(MKVFX_SRC_ROOT)/nanovg/src/nanovg.c",
-				"ar rs libnanovg.a nanovg.o"
-			],
-			"install_osx": [
-				"cp $(MKVFX_BUILD_ROOT)/nanovg/libnanovg.a $(MKVFX_ROOT)/lib",
-				"cp $(MKVFX_SRC_ROOT)/nanovg/src/*.h $(MKVFX_ROOT)/include",
-				"cp $(MKVFX_SRC_ROOT)/nanovg/example/stb_image_write.h $(MKVFX_ROOT)/include"
-			]
-		},
-		{
 			"name": "OpenColorIO",
 			"platforms": ["windows"],
 			"dir": "OpenColorIO",
@@ -577,7 +469,7 @@
 					"-DNDEBUG-DOCIO_BUILD_NUKE=OFF -DOCIO_BUILD_DOCS=OFF -DOCIO_BUILD_TESTS=OFF \"$(MKVFX_SRC_ROOT)/OpenColorIO\""
 			],
 			"install_windows": [
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenColorIO\\opencolorio.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			]
 		},
 		{
@@ -598,7 +490,7 @@
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\Release\\Half.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Iex\\Release\\*.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\*.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\openexr.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\\IlmImf*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
@@ -610,190 +502,6 @@
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrmultiview\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\exrstdattr\\Release\\*.exe\" \"$(MKVFX_ROOT)\\bin\\\" /s /y"
 			]
-		},
-		{
-			"name": "OpenImageIO",
-			"platforms": ["osx"],
-			"notes": "Specify FIELD3D_HOME= when Field3d is built",
-			"dir": "OpenImageIO",
-			"build_in": "$(MKVFX_SRC_ROOT)/OpenImageIO",
-			"dependencies": [ "jpeg", "libpng", "libtiff", "OpenColorIO", "glew" ],
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/OpenImageIO/oiio.git"
-			},
-			"recipe_osx": [
-				"mkdir -p build",
-				"cd build;cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
-					"-DCMAKE_CXX_COMPILER_WORKS=1 +",
-					"-DOPENEXR_INCLUDE_DIR=$(MKVFX_ROOT)/include +",
-					"-DOPENEXR_ILMIMF_LIBRARIES=$(MKVFX_ROOT)/lib +",
-					"-DOCIO_PATH=$(MKVFX_ROOT) +",
-					"..",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libOpenImageIO.dylib $(MKVFX_ROOT)/bin/libOpenImageIO.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libOpenImageIO_Util.dylib $(MKVFX_ROOT)/bin/libOpenImageIO_Util.dylib"
-			]
-		},
-		{
-			"name": "OpenShadingLanguage-WIP",
-			"platforms": ["osx"],
-			"dir": "OpenShadingLanguage",
-			"build_in": "$(MKVFX_SRC_ROOT)/OpenShadingLanguage",
-			"dependencies": ["OpenImageIO", "partio", "llvm"],
-			"notes": "export DYLD_LIBRARY_PATH doesn't work from this script. Setting it is super not-good, must be another way to invoke osl compiler, dylibs in bin?",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/imageworks/OpenShadingLanguage.git"
-			},
-			"recipe_osx": [
-				"mkdir -p build",
-				"cd build; +",
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) +",
-					" -DTHIRD_PARTY_TOOLS_HOME=$(MKVFX_ROOT) +",
-					" -DLLVM_CONFIG=$(MKVFX_ROOT)/bin/llvm-config -DLLVM_STATIC=1 +",
-					" -DILMBASE_HOME=$(MKVFX_ROOT)/include +",
-					" -DUSE_CPP11=1 -DUSE_LIBCPLUSPLUS=1 +",
-					" ..",
-				"cd build;make -j 4"
-			],
-			"install_osx": [
-				"cd build;make install"
-			]
-		},
-		{
-			"name": "OpenSubdiv",
-			"platforms": ["osx"],
-			"dir": "OpenSubdiv",
-			"build_in": "/tmp/OpenSubdiv",
-			"dependencies": ["glew", "glfw", "IlmBase", "ptex"],
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/PixarAnimationStudios/OpenSubdiv.git"
-			},
-			"recipe_osx": [
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) -DGLEW_LOCATION=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenSubdiv",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libosdCPU.dylib $(MKVFX_ROOT)/bin/libosdCPU.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libosdGPU.dylib $(MKVFX_ROOT)/bin/libosdGPU.dylib"
-			]
-		},
-		{
-			"name": "OpenVDB",
-			"platforms": ["osx"],
-			"note": "numpy is required before the python integration can be activated",
-			"dir": "OpenVDB",
-			"build_in": "$(MKVFX_ROOT)/OpenVDB",
-			"dependencies": ["boost", "c-blosc", "glfw", "IlmBase", "python", "tbb"],
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/dreamworksanimation/openvdb.git"
-			},
-			"recipe_osx": [
-			    "SEARCH=\"LOG4CPLUS_INCL_DIR := \\/rel\\/folio\\/log4cplus\\/log4cplus-1.0.3-latest\\/sys_include\"; +",
-			    "REPLACE=\"LOG4CPLUS_INCL_DIR :=\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"PYTHON_VERSION := 2.6\"; +",
-			    "REPLACE=\"PYTHON_VERSION := 2.7\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"\\$(HFS)\\/python\\/include\"; +",
-			    "REPLACE=\"\\$(HT)\\/include\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"has_python := yes\"; +",
-			    "REPLACE=\"has_python := no\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"CPPUNIT_INCL_DIR := \\/rel\\/map\\/generic-2013.22\\/sys_include\"; +",
-			    "REPLACE=\"CPPUNIT_INCL_DIR := \"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"CONCURRENT_MALLOC_LIB := -ljemalloc\"; +",
-			    "REPLACE=\"CONCURRENT_MALLOC_LIB := \"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/include\"; +",
-			    "REPLACE=\"\\$(HT)\\/include\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"\\/rel\\/third_party\\/glfw\\/glfw-3.0.1\\/lib\"; +",
-			    "REPLACE=\"\\$(HDSO)\\/lib\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"-framework Cocoa -framework OpenGL\"; +",
-			    "REPLACE=\"-framework Cocoa -framework CoreVideo -framework OpenGL\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"DOXYGEN := doxygen\"; +",
-			    "REPLACE=\"DOXYGEN := \"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-			    "SEARCH=\"DESTDIR := \\/tmp\\/OpenVDB\"; +",
-			    "REPLACE=\"DESTDIR := \\$(HT)\"; +",
-			    "sed -e \"s/$SEARCH/$REPLACE/g\" $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile > tmp.txt; +",
-			    "mv tmp.txt $(MKVFX_SRC_ROOT)/OpenVDB/openvdb/Makefile",
-
-				"make -C $(MKVFX_SRC_ROOT)/OpenVDB/openvdb -j 4 HT=$(MKVFX_ROOT) HDSO=$(MKVFX_ROOT) +",
-				"  EXR_LIB_DIR=$(MKVFX_ROOT)/lib",
-				"make -C $(MKVFX_SRC_ROOT)/OpenVDB/openvdb vdb_view -j 4 HT=$(MKVFX_ROOT) HDSO=$(MKVFX_ROOT) +",
-				"  EXR_LIB_DIR=$(MKVFX_ROOT)/lib"
-			],
-			"install_osx": [
-				"make -C $(MKVFX_SRC_ROOT)/OpenVDB/openvdb install HT=$(MKVFX_ROOT) HDSO=$(MKVFX_ROOT) +",
-				   "  EXR_LIB_DIR=$(MKVFX_ROOT)/lib",
-				 "ln -s -f $(MKVFX_ROOT)/lib/libopenvdb.dylib $(MKVFX_ROOT)/bin/libopenvdb.dylib"
-			]
-		},
-		{
-			"name": "partio",
-			"platforms": ["osx"],
-			"note": "bug in partio cmake file expects an html directory forcing in-src build",
-			"dir": "partio",
-			"build_in": "$(MKVFX_SRC_ROOT)/partio",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/wdas/partio.git"
-			},
-			"recipe_osx": [
-				"mkdir -p $(MKVFX_SRC_ROOT)/partio/src/doc/html",
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/partio",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install"
-			]
-		},
-		{
-			"name": "ptex",
-			"platforms": ["osx"],
-			"dir": "ptex",
-			"build_in": "$(MKVFX_SRC_ROOT)/ptex",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/wdas/ptex.git"
-			},
-			"recipe": [
-				"cd $(MKVFX_SRC_ROOT)/ptex/src;make INSTALLDIR='$(MKVFX_ROOT)'"
-			],
-			"install_osx": []
 		},
 		{
 			"name": "PyIlmBase",
@@ -816,7 +524,7 @@
 			],
 			"recipe_windows": [
 				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\PyIlmBase\\pyilmbase.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_osx": [
 				"make install",
@@ -907,7 +615,7 @@
 			},
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)\\sdl2\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\sdl2\\sdl2.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
@@ -988,7 +696,7 @@
 			},
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)\\zlib\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\zlib\\zlib.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
+				"cmake --build . --config Release --target install"
 			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\zlib\\*.h\" \"$(MKVFX_ROOT)\\include\\\" /s /y",
