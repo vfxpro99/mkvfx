@@ -65,35 +65,18 @@ On OSX, mkvfx expects to run in a bash or zsh environment.
 
 On Windows, mkvfx expects to run in a Visual Studio command prompt.
 
-node.js, minimally 0.11.14. Installation using nvm is a straightforward way
-to do it. You'll also get npm with it.
-
-npm, installed as a side effect of installing node.js
-
-Python, grunt requires Python 2.7.x to run, so make sure Python is installed and
-available from the command line.
-
-On Windows, make sure that both node and python can be invoked from the
+On Windows, make sure that python can be invoked from the
 Visual Studio command prompt. The Python installer doesn't modify the PATH
 variable, so do that in the environment settings panel.
 
-```sh
- npm install -g grunt-cli
-```
 
 # mkvfx itself
 
 clone this repo. Install the dependencies using npm.
 
-```sh
- npm install
-```
 
 on Windows, if using VS2015 use this instead:
 
-```sh
- npm install --msvs_version=2015
-```
 
 Now type mkvfx, and all will be revealed.
 
