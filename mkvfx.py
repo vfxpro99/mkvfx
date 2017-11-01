@@ -33,13 +33,14 @@
 # language governing permissions and limitations under the Apache License.
 #
 
-
-
 import argparse
 import contextlib
+import datetime
 import json
 import os
+import multiprocessing
 import platform
+import shlex
 import shutil
 import subprocess
 import sys
@@ -299,6 +300,110 @@ def create_directory_structure(root, src, build):
     create_directory(src)
     create_directory(build)
 
+def GetVisualStudioCompilerAndVersion():
+    """Returns a tuple containing the path to the Visual Studio compiler
+    and a tuple for its version, e.g. (19, 00, 24210). If the compiler is
+    not found, returns None."""
+    if not Windows():
+        return None
+
+    msvcCompiler = find_executable('cl')
+    if msvcCompiler:
+        match = re.search(
+            "Compiler Version (\d+).(\d+).(\d+)",
+            subprocess.check_output("cl", stderr=subprocess.STDOUT))
+        if match:
+            return (msvcCompiler, tuple(int(v) for v in match.groups()))
+
+    print "Defaulting to Visual Studio 2017 as cl was not found in the environment"
+    return (19, 10) # assume Visual Studio 2017
+
+MSVC_2017_COMPILER_VERSION = 10
+
+def Run(cmd):
+    """Run the specified command in a subprocess."""
+    print 'Running "{cmd}"'.format(cmd=cmd)
+    PrintInfo('Running "{cmd}"'.format(cmd=cmd))
+
+    with open("log.txt", "a") as logfile:
+        # Let exceptions escape from subprocess.check_output -- higher level
+        # code will handle them.
+        p = subprocess.Popen(shlex.split(cmd),
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+        logfile.write("\n")
+        logfile.write(cmd)
+        logfile.write("\n")
+        while True:
+            l = p.stdout.readline()
+            if l != "":
+                logfile.write(l)
+                PrintCommandOutput(l)
+            elif p.poll() is not None:
+                break
+
+    if p.returncode != 0:
+        # If verbosity >= 3, we'll have already been printing out command output
+        # so no reason to print the log file again.
+        if verbosity < 3:
+            with open("log.txt", "r") as logfile:
+                Print(logfile.read())
+        raise RuntimeError("Failed to run '{cmd}'\nSee {log} for more details."
+                           .format(cmd=cmd, log=os.path.abspath("log.txt")))
+
+
+def RunCMake(srcDir, buildDirRoot, instDir, force, config, extraArgs = None):
+    """Invoke CMake to configure, build, and install a library whose
+    source code is located in srcDir."""
+    if not (config == 'Debug' or config == 'Release'):
+        raise RuntimeError("config must be Debug or Release. Found {config}".format(config=config))
+
+    buildDir = os.path.join(buildDirRoot, os.path.split(srcDir)[1])
+    if force and os.path.isdir(buildDir):
+        shutil.rmtree(buildDir)
+
+    if not os.path.isdir(buildDir):
+        os.makedirs(buildDir)
+
+    # On Windows, we need to explicitly specify the generator to ensure we're
+    # building a 64-bit project.
+    if Windows():
+        msvcCompilerAndVersion = GetVisualStudioCompilerAndVersion()
+        if msvcCompilerAndVersion:
+            _, version = msvcCompilerAndVersion
+            print "version", version
+            if version >= MSVC_2017_COMPILER_VERSION:
+                generator = '-G "Visual Studio 15 2017 Win64"'
+            else:
+                generator = '-G "Visual Studio 14 2015 Win64"'
+    elif MacOS():
+        generator = '-G Xcode'
+    else:
+        generator = '-G make'
+
+    # On MacOS, enable the use of @rpath for relocatable builds.
+    osx_rpath = None
+    if MacOS():
+        osx_rpath = "-DCMAKE_MACOSX_RPATH=ON"
+
+    with CurrentWorkingDirectory(buildDir):
+        Run('cmake '
+            '-DCMAKE_INSTALL_PREFIX="{instDir}" '
+            '-DCMAKE_PREFIX_PATH="{depsInstDir}" '
+            '{osx_rpath} '
+            '{generator} '
+            '{extraArgs} '
+            '"{srcDir}"'
+            .format(instDir=instDir,
+                    depsInstDir=instDir,
+                    srcDir=srcDir,
+                    osx_rpath=(osx_rpath or ""),
+                    generator=(generator or ""),
+                    extraArgs=(" ".join(extraArgs) if extraArgs else "")))
+        Run("cmake --build . --config {config} --target install -- {multiproc}"
+            .format(config=config,
+                    multiproc=("/M:{procs}" if Windows() else "-j{procs}")
+                               .format(procs=multiprocessing.cpu_count())))
 
 
 #-----------------------------------------------------
@@ -309,6 +414,15 @@ def create_directory_structure(root, src, build):
 # La Trattoria
 #-----------------------------------------------------
 
+def has_data(recipe, data):
+    global build_platform
+    platform_data = data + '_' + build_platform
+    if platform_data in recipe:
+        return True
+    if data in recipe:
+        return True
+    return False
+
 def get_data(recipe, data):
     global build_platform
     platform_data = data + '_' + build_platform
@@ -318,30 +432,33 @@ def get_data(recipe, data):
         return recipe[data]
     return ''
 
-def runRecipe(context, recipe, package_name, package, dir_name, execute):
-    global mkvfx_root, build_platform, cwd
-
-    print "package:", package_name
-
-    build_dir = get_data(package, 'build_in')
-    if len(build_dir) == 0:
-        build_dir = context.srcDir + "/" + dir_name
-
+def buildDir(context, package, dir_name):
+    build_dir = ''
+    if has_data(package, 'build_in'):
+        build_dir = get_data(package, 'build_in')
+    build_dir = os.path.join(context.srcDir, dir_name)
     build_dir = substitute_variables(context, build_dir)
-
-    print "in directory:", build_dir
     exists = os.path.exists(build_dir)
     if not os.path.isdir(build_dir):
         if exists:
             print "Build path", build_dir, "exists, but is not a directory"
             sys.exit(1)
-
         try:
             os.makedirs(build_dir)
         except Exception as e:
-            print "Could not create build directory", build_dir, "\nfor", package_name, "because", e
-            sys.exit(1)
+            err = "Could not create build directory " + build_dir + "\nfor " + package_name + " because " + e
+            print err
+            raise RuntimeError(err)
+    return build_dir
 
+def runRecipe(context, recipe, package_name, package, dir_name, execute):
+    global mkvfx_root, build_platform, cwd
+
+    print "package:", package_name
+    build_dir = buildDir(context, package, dir_name)
+
+    print "in directory:", build_dir
+ 
     os.chdir(build_dir)
 
 	# join all lines ending in +
@@ -451,9 +568,25 @@ def bake(context, package_name):
 
     if option_do_build:
         print "Building recipe:", package_name
-        run_recipe = get_data(recipe, 'recipe')
-        if len(run_recipe) > 0:
-            runRecipe(context, run_recipe, package_name, recipe, dir_name, option_do_build)
+        if has_data(recipe, "build"):
+            build_step = get_data(recipe, "build")
+            if not build_step["cmake"]:
+                raise RuntimeError("package {name} specifies build step but only cmake is supported at the moment".format(name=package_name))
+            cmake_args = build_step["cmake"]
+            configurations = [ "Release "]
+            if build_step["configurations"]:
+                configurations = build_step["configurations"]
+            for config in configurations:
+                if option_do_build:
+                    force = False
+                    build_dir = buildDir(context, package_name, dir_name)
+                    RunCMake(dir_path, build_dir, mkvfx_root, force, config, cmake_args)
+                else:
+                    print "cmake"
+        else:
+            run_recipe = get_data(recipe, 'recipe')
+            if len(run_recipe) > 0:
+                runRecipe(context, run_recipe, package_name, recipe, dir_name, option_do_build)
 
     if option_do_install:
         print "Installing", package_name
