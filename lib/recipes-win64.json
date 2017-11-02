@@ -283,10 +283,14 @@
 				"type": "git",
 				"url": "https://github.com/glfw/glfw.git"
 			},
-			"recipe_windows": [
-				"cmake -G \"Visual Studio 14 2015 Win64\" -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/glfw\"",
-				"cmake --build . --config Release --target install"
-			],
+			"build" : {
+				"cmake" : [
+					"-DGLFW_BUILD_TESTS=OFF",
+					"-DGLFW_BUILD_EXAMPLES=OFF",
+					"-DGLFW_BUILD_DOCS=OFF"
+				],
+				"configurations": [ "Debug", "Release" ]
+			},
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\glfw\\include\\GLFW\\*\" \"$(MKVFX_ROOT)\\include\\GLFW\\\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\glfw\\src\\Release\\*\" \"$(MKVFX_ROOT)\\lib\\\" /s /y"
@@ -350,30 +354,9 @@
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
 			},
-			"recipe_osx": [
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/IlmBase",
-				"make -j 4"
-			],
 			"recipe_windows": [
 				"cmake -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/IlmBase\"",
 				"cmake --build . --config Release --target install"
-			],
-			"install_osx": [
-				"make install",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIex-2_2.dylib $(MKVFX_ROOT)/lib/libIex.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIex-2_2.la $(MKVFX_ROOT)/lib/libIex.la",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath-2_2.dylib $(MKVFX_ROOT)/lib/libIexMath.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath-2_2.la $(MKVFX_ROOT)/lib/libIexMath.la",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIlmThread-2_2.dylib $(MKVFX_ROOT)/lib/libIlmThread.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIlmThread-2_2.la $(MKVFX_ROOT)/lib/libIlmThread.la",
-				"ln -s -f $(MKVFX_ROOT)/lib/libImath-2_2.dylib $(MKVFX_ROOT)/lib/libImath.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libImath-2_2.la $(MKVFX_ROOT)/lib/libImath.la",
-
-				"ln -s -f $(MKVFX_ROOT)/lib/libIlmThread.dylib $(MKVFX_ROOT)/bin/libIlmThread.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libHalf.dylib $(MKVFX_ROOT)/bin/libHalf.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIex.dylib $(MKVFX_ROOT)/bin/libIex.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libImath.dylib $(MKVFX_ROOT)/bin/libImath.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath.dylib $(MKVFX_ROOT)/bin/libIexMath.dylib"
 			],
 			"install_windows": [
 				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_ROOT)\\include\\OpenEXR'\"",
@@ -481,22 +464,9 @@
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
 			},
-			"recipe_osx": [
-				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\")'$'\\n' +",
-				"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt > $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp",
-				"rm $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
-				"mv $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
-				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase",
-				"make -j 4"
-			],
 			"recipe_windows": [
 				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase\"",
 				"cmake --build . --config Release --target install"
-			],
-			"install_osx": [
-				"make install",
-				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyIex/*.h $(MKVFX_ROOT)/include",
-				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyImath/*.h $(MKVFX_ROOT)/include"
 			],
 			"install_windows": []
 		},
@@ -621,9 +591,6 @@
 				"url": "https://github.com/nothings/stb.git"
 			},
 			"recipe": [],
-			"install_osx": [
-				"cp $(MKVFX_SRC_ROOT)/stb/stb*.h $(MKVFX_ROOT)/include"
-			],
 			"install_windows": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\stb\\stb*.h\" \"$(MKVFX_ROOT)\\include\" /s /y"
 			]
