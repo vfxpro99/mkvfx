@@ -126,20 +126,35 @@
 			"name": "boost",
 			"platforms": ["osx", "windows"],
 			"dir": "boost",
-            "notes": "building boost 1.60 for vs2014 compatibility, 1.57 is minimum for OSX, 1.55 is vfxplatform",
-			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_60_0",
-			"dependencies": [ "boost-build-club" ],
+			"dependencies": ["python"],
+			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_65_0",
 			"repository": {
 				"type": "curl-tgz",
-				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_60_0.tar.gz"
+				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_65_0.tar.gz"
 			},
-			"recipe_osx": [
-				"cp \"$(MKVFX_SRC_ROOT)/boost-build-club/\"* \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0\"",
-				"chmod 744 build-OSX.sh;./build-OSX.sh"
-			],
+			"build": {
+				"b2": [ 
+					"--prefix=\"$(MKVFX_ROOT)\"",
+					"--build-dir=\"$(MKVFX_BUILD_ROOT)\"",
+            		"-j$(PROCS)",
+		            "address-model=64",
+		            "link=shared",
+		            "runtime-link=shared",
+		            "threading=multi", 
+		            "variant=$(CONFIGURATION)",
+		            "--with-atomic",
+		            "--with-date_time",
+		            "--with-filesystem",
+		            "--with-program_options",
+		            "--with-python",
+		            "--with-regex",
+		            "--with-system",
+		            "--with-thread"
+				]
+			},
 			"install_osx": [
-				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/stage-OSX/lib/\"* \"$(MKVFX_ROOT)/lib\"",
-				"cp -R \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/boost\" \"$(MKVFX_ROOT)/include/boost\""
+				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_65_0/stage-OSX/lib/\"* \"$(MKVFX_ROOT)/lib\"",
+				"cp -R \"$(MKVFX_SRC_ROOT)/boost/boost_1_65_0/boost\" \"$(MKVFX_ROOT)/include/boost\""
 			]
 		},
 		{
@@ -355,12 +370,12 @@
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
 			},
-			"recipe_osx": [
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/IlmBase",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install",
+			"build" : {
+				"cwd" : "IlmBase",
+				"cmake" : [ "" ],
+				"configurations": [ "Debug", "Release" ]
+			},
+			"install": [
 				"ln -s -f $(MKVFX_ROOT)/lib/libIex-2_2.dylib $(MKVFX_ROOT)/lib/libIex.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIex-2_2.la $(MKVFX_ROOT)/lib/libIex.la",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIexMath-2_2.dylib $(MKVFX_ROOT)/lib/libIexMath.dylib",
@@ -568,26 +583,15 @@
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
 			},
-			"recipe_osx": [
-				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR",
-				"make -j 4"
-			],
-			"recipe_windows": [
-				"cmake -G \"Visual Studio 14 2015 Win64\" -DILMBASE_PACKAGE_PREFIX=\"$(MKVFX_ROOT)\" -DZLIB_LIBRARY=\"$(MKVFX_ROOT)\\lib\\zlibstatic.lib\" -DZLIB_INCLUDE_DIR=\"$(MKVFX_ROOT)\\include\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/OpenEXR\"",
-				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release'\"",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Half\\Release\\Half.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\Iex\\Release\\*.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\IlmBase\\IlmThread\\Release\\*.dll\" \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\IlmImf\\Release\" /s /y",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\OpenEXR\\openexr.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
-			],
-			"install_osx": [
-				"make install",
+			"build" : {
+				"cwd" : "OpenEXR",
+				"cmake" : [ "-DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT)" ],
+				"configurations": [ "Debug", "Release" ]
+			},
+			"install": [
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImf.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImfUtil-2_2.dylib $(MKVFX_ROOT)/lib/libIlmImfUtil.dylib",
 				"ln -s -f $(MKVFX_ROOT)/lib/libIlmImf.dylib $(MKVFX_ROOT)/bin/libIlmImf.dylib"
-			],
-			"install_windows": [
-
 			]
 		},
 		{
@@ -806,35 +810,47 @@
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
 			},
-			"recipe_osx": [
-				"sed '11i\\\n\\'$'\\nSET(CMAKE_CXX_FLAGS \"-isystem $(MKVFX_ROOT)/include\")'$'\\n' +",
-				"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt > $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp",
-                "rm $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
-                "mv $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/xxx.tmp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/CMakeLists.txt",
-				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase +",
-                    "-DBoost_INCLUDE_DIR=\"$(MKVFX_ROOT)/include\" -DBoost_LIBRARY_DIR=\"$(MKVFX_ROOT)/lib\"",
-				"make -j 4"
-			],
-			"recipe_windows": [
-				"cmake -DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT) -G \"Visual Studio 14 2015 Win64\" -DCMAKE_INSTALL_PREFIX=\"$(MKVFX_ROOT)\" \"$(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase\"",
-				"msbuild \"$(MKVFX_BUILD_ROOT)\\PyIlmBase\\pyilmbase.sln\" /t:Build /p:Configuration=Release /p:Platform=x64"
-			],
+			"build" : {
+				"cwd" : "PyIlmBase",
+				"cmake" : [ 
+					"-DILMBASE_PACKAGE_PREFIX=$(MKVFX_ROOT)",
+					"-DBoost_INCLUDE_DIR=\"$(MKVFX_ROOT)/include\"",
+					"-DBoost_LIBRARY_DIR=\"$(MKVFX_ROOT)/lib\"" 
+				],
+				"configurations": [ "Debug", "Release" ]
+			},
 			"install_osx": [
-				"make install",
 				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyIex/*.h $(MKVFX_ROOT)/include",
 				"cp $(MKVFX_SRC_ROOT)/OpenEXR/PyIlmBase/PyImath/*.h $(MKVFX_ROOT)/include"
-			],
-			"install_windows": []
+			]
 		},
 		{
 			"name": "python",
 			"platforms": ["osx"],
-			"dir": "python",
+			"dir": "python/Python-2.7.3",
 			"build_in": "$(MKVFX_SRC_ROOT)/python/Python-2.7.3",
 			"dependencies": ["sqlite"],
 			"repository": {
 				"type": "curl-tgz",
 				"url": "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tar.bz2"
+			},
+			"recipe_osx": [
+				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
+				"make -j 4"
+			],
+			"install_osx": [
+				"make install"
+			]
+		},
+		{
+			"name": "python3",
+			"platforms": ["osx"],
+			"dir": "python/Python-3.6.3",
+			"build_in": "$(MKVFX_SRC_ROOT)/python/Python-3.6.3",
+			"dependencies": ["sqlite"],
+			"repository": {
+				"type": "curl-tgz",
+				"url": "https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz"
 			},
 			"recipe_osx": [
 				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",

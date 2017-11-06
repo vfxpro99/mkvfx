@@ -51,8 +51,12 @@ import zipfile
 
 from distutils.spawn import find_executable
 
-version = "0.2.0"
+version = "0.3.0"
 print "mkvfx", version
+
+MSVC_2017_COMPILER_VERSION = 10
+MSVC_2017_TOOLSET = '14.1'
+
 
 #-----------------------------------------------------
 # Command line options
@@ -135,11 +139,11 @@ def CurrentWorkingDirectory(dir):
 
 def DownloadURL(url, context, force):
     """Download and extract the archive file at given URL to the
-    source directory specified in the context. Returns the absolute
+    source directory specified in the context. Returns the absolute 
     path to the directory where files have been extracted."""
     with CurrentWorkingDirectory(context.srcDir):
-        # Extract filename from URL and see if file already exists.
-        filename = url.split("/")[-1]
+        # Extract filename from URL and see if file already exists. 
+        filename = url.split("/")[-1]       
         if force and os.path.exists(filename):
             os.remove(filename)
 
@@ -149,13 +153,35 @@ def DownloadURL(url, context, force):
         else:
             PrintInfo("Downloading {0} to {1}"
                       .format(url, os.path.abspath(filename)))
-            try:
-                r = urllib2.urlopen(url)
-                with open(filename, "wb") as outfile:
-                    outfile.write(r.read())
-            except Exception as e:
+
+            # To work around occasional hiccups with downloading from websites
+            # (SSL validation errors, etc.), retry a few times if we don't
+            # succeed in downloading the file.
+            maxRetries = 5
+            lastError = None
+
+            # Download to a temporary file and rename it to the expected
+            # filename when complete. This ensures that incomplete downloads
+            # will be retried if the script is run again.
+            tmpFilename = filename + ".tmp"
+            if os.path.exists(tmpFilename):
+                os.remove(tmpFilename)
+
+            for i in xrange(maxRetries):
+                try:
+                    r = urllib2.urlopen(url)
+                    with open(tmpFilename, "wb") as outfile:
+                        outfile.write(r.read())
+                    break
+                except Exception as e:
+                    PrintCommandOutput("Retrying download due to error: {err}\n"
+                                       .format(err=e))
+                    lastError = e
+            else:
                 raise RuntimeError("Failed to download {url}: {err}"
-                                   .format(url=url, err=e))
+                                   .format(url=url, err=lastError))
+
+            shutil.move(tmpFilename, filename)
 
         # Open the archive and retrieve the name of the top-most directory.
         # This assumes the archive contains a single directory with all
@@ -181,12 +207,29 @@ def DownloadURL(url, context, force):
                           .format(extractedPath))
             else:
                 PrintInfo("Extracting archive to {0}".format(extractedPath))
-                archive.extractall()
 
+                # Extract to a temporary directory then move the contents
+                # to the expected location when complete. This ensures that
+                # incomplete extracts will be retried if the script is run
+                # again.
+                tmpExtractedPath = os.path.abspath("extract_dir")
+                if os.path.isdir(tmpExtractedPath):
+                    shutil.rmtree(tmpExtractedPath)
+
+                archive.extractall(tmpExtractedPath)
+                shutil.move(os.path.join(tmpExtractedPath, rootDir),
+                            extractedPath)
+                shutil.rmtree(tmpExtractedPath)
+                
             return extractedPath
         except Exception as e:
+            # If extraction failed for whatever reason, assume the
+            # archive file was bad and move it aside so that re-running
+            # the script will try downloading and extracting again.
+            shutil.move(filename, filename + ".bad")
             raise RuntimeError("Failed to extract archive {filename}: {err}"
                                .format(filename=filename, err=e))
+
 
 
 def userHome():
@@ -197,14 +240,24 @@ def platform_path(path):
 
 def substitute_variables(context, subst):
     global mkvfx_root, mkvfx_build_root
+    procs = "{procs}".format(procs=multiprocessing.cpu_count())
     result = subst.replace("$(MKVFX_ROOT)", mkvfx_root)
     result = result.replace("$(MKVFX_SRC_ROOT)", context.srcDir)
     result = result.replace("$(MKVFX_BUILD_ROOT)", mkvfx_build_root)
+    result = result.replace("$(PROCS)", procs)
+    result = result.replace("$(CONFIGURATION)", context.current_configuration)
 
     if result != subst:
         return substitute_variables(context, result)
 
     return result
+
+def substitute_variables_array(context, str_array):
+    result = []
+    for str in str_array:
+        result.append(substitute_variables(context, str))
+    return result
+
 
 def execTask(task, workingDir='.'):
     print "Running", task
@@ -318,7 +371,20 @@ def GetVisualStudioCompilerAndVersion():
     print "Defaulting to Visual Studio 2017 as cl was not found in the environment"
     return (19, 10) # assume Visual Studio 2017
 
-MSVC_2017_COMPILER_VERSION = 10
+
+
+def PatchFile(filename, patches):
+    """Applies patches to the specified file. patches is a list of tuples
+    (old string, new string)."""
+    oldLines = open(filename, 'r').readlines()
+    newLines = oldLines
+    for (oldLine, newLine) in patches:
+        newLines = [s.replace(oldLine, newLine) for s in newLines]
+    if newLines != oldLines:
+        PrintInfo("Patching file {filename} (original in {oldFilename})..."
+                  .format(filename=filename, oldFilename=filename + ".old"))
+        shutil.copy(filename, filename + ".old")
+        open(filename, 'w').writelines(newLines)
 
 def Run(cmd):
     """Run the specified command in a subprocess."""
@@ -352,18 +418,24 @@ def Run(cmd):
                            .format(cmd=cmd, log=os.path.abspath("log.txt")))
 
 
-def RunCMake(srcDir, buildDirRoot, instDir, force, config, extraArgs = None):
-    """Invoke CMake to configure, build, and install a library whose
-    source code is located in srcDir."""
-    if not (config == 'Debug' or config == 'Release'):
-        raise RuntimeError("config must be Debug or Release. Found {config}".format(config=config))
-
-    buildDir = os.path.join(buildDirRoot, os.path.split(srcDir)[1])
+def ProjectBuildDir(buildDirRoot, projectName, force = False):
+    buildDir = os.path.join(buildDirRoot, projectName)
     if force and os.path.isdir(buildDir):
         shutil.rmtree(buildDir)
 
     if not os.path.isdir(buildDir):
         os.makedirs(buildDir)
+
+    return buildDir
+
+def RunCMake(context, srcDir, buildDirRoot, instDir, force, config, extraArgs = None):
+    """Invoke CMake to configure, build, and install a library whose
+    source code is located in srcDir."""
+    if not (config == 'Debug' or config == 'Release'):
+        raise RuntimeError("config must be Debug or Release. Found {config}".format(config=config))
+
+    context.current_configuration = config
+    buildDir = ProjectBuildDir(buildDirRoot, os.path.split(srcDir)[1], force)
 
     # On Windows, we need to explicitly specify the generator to ensure we're
     # building a 64-bit project.
@@ -402,9 +474,45 @@ def RunCMake(srcDir, buildDirRoot, instDir, force, config, extraArgs = None):
                     extraArgs=(" ".join(extraArgs) if extraArgs else "")))
         Run("cmake --build . --config {config} --target install -- {multiproc}"
             .format(config=config,
-                    multiproc=("/M:{procs}" if Windows() else "-j{procs}")
+                    multiproc=("/M:{procs}" if Windows() else "-jobs {procs}")
                                .format(procs=multiprocessing.cpu_count())))
 
+
+def RunB2(context, srcDir, buildDirRoot, instDir, force, config, b2_settings):
+    with CurrentWorkingDirectory(srcDir):
+        buildDir = ProjectBuildDir(buildDirRoot, os.path.split(srcDir)[1], force)
+
+        bootstrap = "bootstrap.bat" if Windows() else "./bootstrap.sh"
+        Run('{bootstrap} --prefix="{instDir}"'
+            .format(bootstrap=bootstrap, instDir=instDir))
+
+        if force:
+            b2_settings.append("-a")
+
+        if Windows():
+            b2_settings.append("toolset=msvc-{toolset}".format(toolset=MSVC_2017_TOOLSET))
+            
+            # Boost 1.61 doesn't support Visual Studio 2017.  If that's what 
+            # we're using then patch the project-config.jam file to hack in 
+            # support. We'll get a lot of messages about an unknown compiler 
+            # version but it will build.
+            msvcCompilerAndVersion = GetVisualStudioCompilerAndVersion()
+            if msvcCompilerAndVersion:
+                compiler, version = msvcCompilerAndVersion
+                if version >= MSVC_2017_COMPILER_VERSION:
+                    PatchFile('project-config.jam',
+                              [('using msvc', 
+                                'using msvc : {toolset} : "{compiler}"'
+                                .format(toolset=MSVC_2017_TOOLSET, compiler=compiler))])
+
+        if MacOS():
+            # Must specify toolset=clang to ensure install_name for boost
+            # libraries includes @rpath
+            b2_settings.append("toolset=clang")
+
+        b2 = "b2" if Windows() else "./b2"
+        Run('{b2} {options} install'
+            .format(b2=b2, options=" ".join(b2_settings)))
 
 #-----------------------------------------------------
 # Build component dependencies
@@ -539,30 +647,8 @@ def bake(context, package_name):
                             branch = " --branch " + repository.branch + " "
                         cmd = "git -C " + platform_path(context.srcDir) + " clone --depth 1 " + branch + url + " " + dir_name
                     execTask(cmd)
-                elif type == "zip":
-                    DownloadURL(url, context, False)
-                elif type == "curl-tgz":
-                    if not os.path.exists(dir_path):
-                        try:
-                            os.makedirs(dir_path)
-                        except Exception as e:
-                            print "Could not create fetch directory", dir_path, "because", e
-                            sys.exit(1)
-
-                    if build_platform == "windows":
-                        # reference http://stackoverflow.com/questions/9155289/calling-powershell-from-nodejs
-                        # reference http://blog.commandlinekungfu.com/2009/11/episode-70-tangled-web.html
-                        # reference http://stackoverflow.com/questions/1359793/programmatically-extract-tar-gz-in-a-single-step-on-windows-with-7zip
-                        command = "(New-Object System.Net.WebClient).DownloadFile('" + url + "','" + dir_path + "/download.tar.gz')"
-                        execTask('powershell -Command "' + command + '"', dir_path)
-
-                        command = '7z x "' + dir_path + '/download.tar.gz' + '" -so | 7z x -aoa -si -ttar -o"' + dir_path + '"'
-                        execTask('cmd.exe \'/C' + command, dir_path)
-                    else:
-                        command = "curl -L -o " + dir_path + "/" + package_name + ".tgz " + url
-                        execTask(command, dir_path)
-                        command = "tar -zxf " + package_name + ".tgz"
-                        execTask(command, dir_path)
+                elif type == "zip" or type == "curl-tgz":
+                    dir_path = DownloadURL(url, context, False)
     else:
         print "Repository not specified, nothing to fetch"
 
@@ -570,19 +656,44 @@ def bake(context, package_name):
         print "Building recipe:", package_name
         if has_data(recipe, "build"):
             build_step = get_data(recipe, "build")
-            if not build_step["cmake"]:
-                raise RuntimeError("package {name} specifies build step but only cmake is supported at the moment".format(name=package_name))
-            cmake_args = build_step["cmake"]
-            configurations = [ "Release "]
-            if build_step["configurations"]:
+            build_system = None
+            if "cmake" in build_step:
+                build_system = "cmake"
+            elif "b2" in build_step:
+                build_system = "b2"
+            if build_system == None:
+                raise RuntimeError("package {name} specifies build step but only cmake and b2 are supported at the moment".format(name=package_name))
+
+            cmake_args = []
+            b2_args = []
+
+            configurations = [ "Debug", "Release" ]
+            if "configurations" in build_step:
                 configurations = build_step["configurations"]
+
             for config in configurations:
                 if option_do_build:
+
+                    if build_system == "cmake":           
+                        context.current_configuration = config
+                        cmake_args = substitute_variables_array(context, build_step["cmake"])
+                    elif build_system == "b2":
+                        context.current_configuration = config.lower()
+                        b2_args = substitute_variables_array(context, build_step["b2"])
+
                     force = False
+
                     build_dir = buildDir(context, package_name, dir_name)
-                    RunCMake(dir_path, build_dir, mkvfx_root, force, config, cmake_args)
+                    resolved_dir_path = dir_path
+                    if "cwd" in build_step:
+                        resolved_dir_path = os.path.join(dir_path, build_step["cwd"])
+
+                    if build_system == "cmake":
+                        RunCMake(context, resolved_dir_path, build_dir, mkvfx_root, force, config, cmake_args)
+                    elif build_system == "b2":
+                        RunB2(context, resolved_dir_path, build_dir, mkvfx_root, force, config, b2_args)
                 else:
-                    print "cmake"
+                    print build_system
         else:
             run_recipe = get_data(recipe, 'recipe')
             if len(run_recipe) > 0:
@@ -654,6 +765,7 @@ class InstallContext:
         # Directory where dependencies will be downloaded and extracted
         self.srcDir = (os.path.abspath(args.src) if args.src
                        else home + "/mkvfx-sources")
+        self.current_configuration = "Release"
 
 context = InstallContext(args)
 
