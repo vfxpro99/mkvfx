@@ -40,6 +40,7 @@ import json
 import os
 import multiprocessing
 import platform
+import re
 import shlex
 import shutil
 import subprocess
@@ -86,12 +87,13 @@ cwd = ""
 home = ""
 mkvfx_root = ""
 mkvfx_build_root = ""
+mkvfx_recipe_dir = os.path.join(sys.path[0], 'lib')
 
 def print_help():
     global package_recipes, build_platform
     print "mkvfx knows how to build:"
     for p in package_recipes:
-        if package_recipes[p]["platforms"]:
+        if "platforms" in package_recipes[p]:
             if build_platform in package_recipes[p]["platforms"]:
                 print ' ', package_recipes[p]['name']
         else:
@@ -244,6 +246,7 @@ def substitute_variables(context, subst):
     result = subst.replace("$(MKVFX_ROOT)", mkvfx_root)
     result = result.replace("$(MKVFX_SRC_ROOT)", context.srcDir)
     result = result.replace("$(MKVFX_BUILD_ROOT)", mkvfx_build_root)
+    result = result.replace("$(MKVFX_RECIPE_DIR)", mkvfx_recipe_dir)
     result = result.replace("$(PROCS)", procs)
     result = result.replace("$(CONFIGURATION)", context.current_configuration)
 
@@ -418,8 +421,7 @@ def Run(cmd):
                            .format(cmd=cmd, log=os.path.abspath("log.txt")))
 
 
-def ProjectBuildDir(buildDirRoot, projectName, force = False):
-    buildDir = os.path.join(buildDirRoot, projectName)
+def ProjectBuildDir(buildDir, force = False):
     if force and os.path.isdir(buildDir):
         shutil.rmtree(buildDir)
 
@@ -434,8 +436,14 @@ def RunCMake(context, srcDir, buildDirRoot, instDir, force, config, extraArgs = 
     if not (config == 'Debug' or config == 'Release'):
         raise RuntimeError("config must be Debug or Release. Found {config}".format(config=config))
 
+
+    print "\n\ncmake\nsrcDir:", srcDir, "\nbuildDirRoot:", buildDirRoot, "\ninstDir:", instDir, "\n"
+
+
     context.current_configuration = config
-    buildDir = ProjectBuildDir(buildDirRoot, os.path.split(srcDir)[1], force)
+    buildDir = ProjectBuildDir(buildDirRoot, force)
+
+    print "buildDir:", buildDir, "\n\n"
 
     # On Windows, we need to explicitly specify the generator to ensure we're
     # building a 64-bit project.
@@ -480,7 +488,7 @@ def RunCMake(context, srcDir, buildDirRoot, instDir, force, config, extraArgs = 
 
 def RunB2(context, srcDir, buildDirRoot, instDir, force, config, b2_settings):
     with CurrentWorkingDirectory(srcDir):
-        buildDir = ProjectBuildDir(buildDirRoot, os.path.split(srcDir)[1], force)
+        buildDir = ProjectBuildDir(os.path.join(buildDirRoot, os.path.split(srcDir)[1]), force)
 
         bootstrap = "bootstrap.bat" if Windows() else "./bootstrap.sh"
         Run('{bootstrap} --prefix="{instDir}"'
@@ -540,11 +548,14 @@ def get_data(recipe, data):
         return recipe[data]
     return ''
 
-def buildDir(context, package, dir_name):
+def buildDir(context, recipe, package, dir_name):
     build_dir = ''
-    if has_data(package, 'build_in'):
-        build_dir = get_data(package, 'build_in')
-    build_dir = os.path.join(context.srcDir, dir_name)
+    if has_data(recipe, 'build_in'):
+        build_dir = get_data(recipe, 'build_in')
+    else:
+        print "YYY", "could not find build_in for ", package
+        build_dir = os.path.join(context.srcDir, dir_name)
+    print "XXX", build_dir 
     build_dir = substitute_variables(context, build_dir)
     exists = os.path.exists(build_dir)
     if not os.path.isdir(build_dir):
@@ -559,11 +570,11 @@ def buildDir(context, package, dir_name):
             raise RuntimeError(err)
     return build_dir
 
-def runRecipe(context, recipe, package_name, package, dir_name, execute):
+def runRecipe(context, full_recipe, recipe, package_name, package, dir_name, execute):
     global mkvfx_root, build_platform, cwd
 
     print "package:", package_name
-    build_dir = buildDir(context, package, dir_name)
+    build_dir = buildDir(context, full_recipe, package, dir_name)
 
     print "in directory:", build_dir
  
@@ -683,7 +694,7 @@ def bake(context, package_name):
 
                     force = False
 
-                    build_dir = buildDir(context, package_name, dir_name)
+                    build_dir = buildDir(context, recipe, package_name, dir_name)
                     resolved_dir_path = dir_path
                     if "cwd" in build_step:
                         resolved_dir_path = os.path.join(dir_path, build_step["cwd"])
@@ -697,13 +708,13 @@ def bake(context, package_name):
         else:
             run_recipe = get_data(recipe, 'recipe')
             if len(run_recipe) > 0:
-                runRecipe(context, run_recipe, package_name, recipe, dir_name, option_do_build)
+                runRecipe(context, recipe, run_recipe, package_name, recipe, dir_name, option_do_build)
 
     if option_do_install:
         print "Installing", package_name
         run_install = get_data(recipe, 'install')
         if len(run_install) > 0:
-            runRecipe(context, run_install, package_name, recipe, dir_name, option_do_install)
+            runRecipe(context, recipe, run_install, package_name, recipe, dir_name, option_do_install)
 
     built_packages.append(package_name)
 
@@ -803,6 +814,7 @@ create_directory_structure(mkvfx_root, context.srcDir, mkvfx_build_root)
 
 # sys.path[0] is the directory the script is located in
 recipe_path = sys.path[0] + '/lib/' + recipes_file
+
 try:
     recipe_file = open(recipe_path, 'r')
 except Exception as e:
@@ -816,7 +828,11 @@ except Exception as e:
     print "Could not read", recipe_path, "because", e
     sys.exit(0)
 
-json_data = json.loads(data)
+try:
+    json_data = json.loads(data)
+except Exception as e:
+    print "Could not parse json data because", e
+    sys.exit(0)
 
 for package in json_data['packages']:
     name = package['name']

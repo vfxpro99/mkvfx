@@ -104,19 +104,11 @@
 				"type": "curl-tgz",
 				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_60_0.tar.gz"
 			},
-			"recipe_osx": [
-				"cp \"$(MKVFX_SRC_ROOT)/boost-build-club/*\" \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0\"",
-				"chmod 744 build-OSX.sh;./build-OSX.sh"
-			],
-			"install_osx": [
-				"cp \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/stage-OSX/lib/*\" \"$(MKVFX_ROOT)/lib\"",
-				"cp -R \"$(MKVFX_SRC_ROOT)/boost/boost_1_60_0/boost\" \"$(MKVFX_ROOT)/include/boost\""
-			],
-			"recipe_windows": [
+			"recipe": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\boost-build-club\\*\" \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\\" /s /y",
 				"cmd.exe '/C build-win-shared.bat"
 			],
-			"install_windows": [
+			"install": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
 				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
 				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\boost\\*\" \"$(MKVFX_ROOT)\\include\\boost\\\" /s /y"
@@ -196,28 +188,23 @@
 				"xcopy \"$(MKVFX_SRC_ROOT)\\bx\\include\\tinystl\\*\" \"$(MKVFX_ROOT)\\include\\tinystl\\\" /s /y"
 			]
 		},
-		{
-			"name": "c-blosc",
-			"platforms": ["osx"],
-			"dir": "c-blosc",
-			"build_in": "$(MKVFX_BUILD_ROOT)/c-blosc",
-			"repository": {
-				"type": "git",
-				"url": "git://github.com/Blosc/c-blosc.git"
+        {
+            "name": "freetype",
+            "dir": "freetype",
+            "dependencies": ["png", "z"],
+            "build_in": "${MKVFX_BUILD_ROOT)/freetype",
+            "repository": {
+                "type": "zip",
+                "url": "http://downloads.sourceforge.net/project/freetype/freetype2/2.9/ft29.zip"
+            },
+			"build" : {
+				"cmake" : [
+				],
+				"configurations": [ "Debug", "Release" ]
 			},
-			"recipe_osx": [
-				"cmake -DCMAKE_INSTALL_PREFIX=$(MKVFX_ROOT) $(MKVFX_SRC_ROOT)/c-blosc",
-				"make blosc_static -j 4",
-				"make blosc_shared -j 4"
-			],
-			"install_osx": [
-				"cp $(MKVFX_BUILD_ROOT)/c-blosc/blosc/libblosc* $(MKVFX_ROOT)/lib",
-				"mkdir -p $(MKVFX_ROOT)/include/blosc",
-				"cp $(MKVFX_SRC_ROOT)/c-blosc/blosc/*.h $(MKVFX_ROOT)/include/blosc",
-				"cp $(MKVFX_BUILD_ROOT)/c-blosc/blosc/config.h $(MKVFX_ROOT)/include/blosc",
-				"ln -s -f $(MKVFX_ROOT)/lib/libblosc.dylib $(MKVFX_ROOT)/bin/libblosc.dylib"
+			"install": [
 			]
-		},
+        },
 		{
 			"name": "glew-build-club",
 			"platforms": ["windows"],
@@ -232,33 +219,11 @@
 		},
 		{
 			"name": "glew",
-			"platforms": ["windows"],
 			"dir": "glew",
-			"repository": {
-				"type" : "zip",
-				"url": "http://downloads.sourceforge.net/project/glew/glew/2.0.0/glew-2.0.0-win32.zip"
-			},
-			"recipe": [],
+			"dependencies": ["glew-build-club"],
+			"build_in": "$(MKVFX_BUILD_ROOT)/glew",
+			"recipe": [], 
 			"install": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-2.0.0\\lib\\Release\\x64\\glew32.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-2.0.0\\bin\\Release\\x64\\glew32.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-2.0.0\\include\\GL\\*\" \"$(MKVFX_ROOT)\\include\\GL\\\" /s /y"
-			]
-		},
-		{
-			"name": "glewx",
-			"platforms": ["windows"],
-			"dir": "glew",
-			"dependencies_windows": ["glew-build-club"],
-			"build_in": "$(MKVFX_SRC_ROOT)/glew",
-			"build_in_windows": "$(MKVFX_BUILD_ROOT)/glew",
-			"repository": {
-				"type": "git",
-				"url": "https://github.com/nigels-com/glew.git"
-			},
-			"recipe_windows": [
-			],
-			"install_windows": [
 				"powershell New-Item -ItemType Directory -Force -Path '\"$(MKVFX_ROOT)\\include\\GL'\"",
 				"xcopy \"$(MKVFX_SRC_ROOT)\\glew-build-club\\include\\GL\\*\" \"$(MKVFX_ROOT)\\include\\GL\\\" /s /y",
 				"cl /c -DSTATIC -DGLEW_BUILD -I\"$(MKVFX_ROOT)/include\" \"$(MKVFX_SRC_ROOT)/glew-build-club/src/glew.c\"",
@@ -275,7 +240,6 @@
 		},
 		{
 			"name": "glfw",
-			"platforms": ["osx", "windows"],
 			"dir": "glfw",
 			"notes": "GLFW_USE_RETINA option enables retina displays",
 			"build_in": "$(MKVFX_BUILD_ROOT)/glfw",
@@ -291,9 +255,10 @@
 				],
 				"configurations": [ "Debug", "Release" ]
 			},
-			"install_windows": [
+			"install": [
 				"xcopy \"$(MKVFX_SRC_ROOT)\\glfw\\include\\GLFW\\*\" \"$(MKVFX_ROOT)\\include\\GLFW\\\" /s /y",
-				"xcopy \"$(MKVFX_BUILD_ROOT)\\glfw\\src\\Release\\*\" \"$(MKVFX_ROOT)\\lib\\\" /s /y"
+				"xcopy \"$(MKVFX_BUILD_ROOT)\\glfw\\src\\Release\\*\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+                "copy \"$(MKVFX_BUILD_ROOT)\\glfw\\src\\Debug\\glfw3.lib\" \"$(MKVFX_BUILD_ROOT)\\lib\\glfw3d.lib\""
 			]
 		},
 		{
@@ -402,7 +367,24 @@
 				"xcopy \"$(MKVFX_SRC_ROOT)\\LabText\\src\\LabText\\*.hpp\" \"$(MKVFX_ROOT)\\include\\LabText\\\" /s /y",
 				"xcopy \"$(MKVFX_SRC_ROOT)\\LabText\\src\\LabText\\*.h\" \"$(MKVFX_ROOT)\\include\\LabText\\\" /s /y"
 			]
+        },
+
+        {
+			"name": "libpng",
+			"dir": "libpng",
+			"build_in": "$(MKVFX_BUILD_ROOT)/libpng",
+			"repository": {
+				"type": "git",
+				"url": "git://github.com/glennrp/libpng.git"
+			},
+            "cmake" : [
+                "-DBUILDSTATIC=1"
+            ],
+            "configurations": [ "Debug", "Release" ],
+			"install": [
+			]
 		},
+
 		{
 			"name": "OpenColorIO",
 			"platforms": ["windows"],
@@ -597,26 +579,21 @@
 		},
 		{
 			"name": "tbb",
-			"platforms": ["osx"],
 			"dir": "tbb",
-			"build_in": "$(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss",
 			"repository": {
-				"type": "curl-tgz",
-				"url": "https://www.threadingbuildingblocks.org/sites/default/files/software_releases/source/tbb43_20141204oss_src.tgz"
+				"type": "zip",
+				"url": "https://www.threadingbuildingblocks.org/sites/default/files/software_releases/windows/tbb44_20160526oss_win_0.zip"
 			},
-			"recipe_osx": [
-				"cd $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss",
-				"pwd",
-				"make -j 4"
+			"recipe": [
 			],
-			"install_osx": [
-				"cp $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/build/macos_intel64_*_release/*.dylib $(MKVFX_ROOT)/lib",
-				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/serial $(MKVFX_ROOT)/include/serial",
-				"cp -R $(MKVFX_SRC_ROOT)/tbb/tbb43_20141204oss/include/tbb $(MKVFX_ROOT)/include/tbb",
-
-				"ln -s -f $(MKVFX_ROOT)/lib/libtbb.dylib $(MKVFX_ROOT)/bin/libtbb.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc.dylib $(MKVFX_ROOT)/bin/libtbbmalloc.dylib",
-				"ln -s -f $(MKVFX_ROOT)/lib/libtbbmalloc_proxy.dylib $(MKVFX_ROOT)/bin/libtbbmalloc_proxy.dylib"
+			"install": [
+                "xcopy \"$(MKVFX_SRC_ROOT)\\tbb44_20160526oss\\include\\serial\" \"$(MKVFX_ROOT)\\include\\serial\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\tbb44_20160526oss\\include\\tbb\" \"$(MKVFX_ROOT)\\include\\tbb\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\tbb44_20160526oss\\lib\\intel64\\vc14\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\tbb44_20160526oss\\lib\\intel64\\vc14\\*.def\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\tbb44_20160526oss\\bin\\intel64\\vc14\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+                "xcopy \"$(MKVFX_SRC_ROOT)\\tbb44_20160526oss\\bin\\intel64\\vc14\\*.pdb\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+                "copy \"$(MKVFX_RECIPE_DIR)\\tbb_config.h\" \"$(MKVFX_ROOT)\\include\\tbb\\\""
 			]
 		},
 		{

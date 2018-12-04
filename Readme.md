@@ -9,7 +9,7 @@ some cases by working around difficulties or inconsistencies in a library's
 build system.
 
 It runs installations in the directory in which it is run. For example, you
-might make a staging directory, such as c:\projects, or ~\projects. Running
+might make a staging directory, such as c:\projects, or ~/projects. Running
 mkvfx in that directory will populate it according to the instructions in 
 the various build recipes. Typically, you will end up with the following
 directories, and miscellaneous others in the directory you run in:
@@ -38,7 +38,7 @@ project, subsequently running
 
 will add the bits that were not already there for OpenSubdiv.
 
-At the moment there are many recipes for OSX, and several for Windows.
+At the moment there are many recipes for macOS and Windows.
 The recipe system allows building on other platforms.
 
 
@@ -57,34 +57,7 @@ assimp
 autoconf
 bgfx
 boost
-boost-build-club
-bullet
-bx
-c-blosc
-glew
-glfw
-glm
-hdf5
-IlmBase
-jsoncpp
-LabText
-libjpeg
-libpng
-libtiff
-llvm
-nanovg
-OpenColorIO
-OpenEXR
-OpenImageIO
-OpenShadingLanguage-WIP
-OpenSubdiv
-OpenVDB
-partio
-ptex
-PyIlmBase
-python
-qt
-qt4
+...
 qt5
 sqlite
 stb
@@ -105,7 +78,7 @@ tbb
 ```
 
 
-## Runtime Environment
+## macOS Runtime Environment
 
 The OSX SDK contains some conflicting libraries, such as libpng. Traditionally,
 one sets the DYLD_LIBRARY_PATH environment variable to point at your own runtime
@@ -123,5 +96,6 @@ you can invoke link magic to tell the loader where to look, or you can prefer
 static versions of the libraries, if they can be built that way.
 
 ### License
-Copyright (c) 2014-2017 Nick Porcino
+Copyright (c) 2014-2018 Nick Porcino
 Licensed under the MIT license.
+
