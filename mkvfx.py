@@ -358,23 +358,43 @@ def create_directory_structure(root, src, build):
 
 def GetVisualStudioCompilerAndVersion():
     """Returns a tuple containing the path to the Visual Studio compiler
-    and a tuple for its version, e.g. (19, 00, 24210). If the compiler is
-    not found, returns None."""
+    and a tuple for its version, e.g. (14, 0). If the compiler is not found
+    or version number cannot be determined, returns None."""
     if not Windows():
         return None
 
     msvcCompiler = find_executable('cl')
     if msvcCompiler:
+        # VisualStudioVersion environment variable should be set by the
+        # Visual Studio Command Prompt.
         match = re.search(
-            "Compiler Version (\d+).(\d+).(\d+)",
-            subprocess.check_output("cl", stderr=subprocess.STDOUT))
+            r"(\d+)\.(\d+)",
+            os.environ.get("VisualStudioVersion", ""))
         if match:
             return (msvcCompiler, tuple(int(v) for v in match.groups()))
+    return None
 
-    print "Defaulting to Visual Studio 2017 as cl was not found in the environment"
-    return (19, 10) # assume Visual Studio 2017
+def IsVisualStudio2019OrGreater():
+    if not Windows():
+        return False
 
+    VISUAL_STUDIO_2019_VERSION = (16, 0)
+    msvcCompilerAndVersion = GetVisualStudioCompilerAndVersion()
+    if msvcCompilerAndVersion:
+        _, version = msvcCompilerAndVersion
+        return version >= VISUAL_STUDIO_2019_VERSION
+    return False
 
+def IsVisualStudio2017OrGreater():
+    if not Windows():
+        return False
+
+    VISUAL_STUDIO_2017_VERSION = (15, 0)
+    msvcCompilerAndVersion = GetVisualStudioCompilerAndVersion()
+    if msvcCompilerAndVersion:
+        _, version = msvcCompilerAndVersion
+        return version >= VISUAL_STUDIO_2017_VERSION
+    return False
 
 def PatchFile(filename, patches):
     """Applies patches to the specified file. patches is a list of tuples
@@ -430,36 +450,54 @@ def ProjectBuildDir(buildDir, force = False):
 
     return buildDir
 
+def FormatMultiProcs(numJobs, generator):
+    tag = "-j"
+    if generator:
+        if "Visual Studio" in generator:
+            tag = "/M:"
+        elif "Xcode" in generator:
+            tag = "-j "
+
+    return "{tag}{procs}".format(tag=tag, procs=numJobs)    
+
 def RunCMake(context, srcDir, buildDirRoot, instDir, force, config, extraArgs = None):
     """Invoke CMake to configure, build, and install a library whose
     source code is located in srcDir."""
     if not (config == 'Debug' or config == 'Release'):
         raise RuntimeError("config must be Debug or Release. Found {config}".format(config=config))
 
-
     print "\n\ncmake\nsrcDir:", srcDir, "\nbuildDirRoot:", buildDirRoot, "\ninstDir:", instDir, "\n"
-
 
     context.current_configuration = config
     buildDir = ProjectBuildDir(buildDirRoot, force)
 
     print "buildDir:", buildDir, "\n\n"
 
+    generator = None
+
     # On Windows, we need to explicitly specify the generator to ensure we're
-    # building a 64-bit project.
-    if Windows():
-        msvcCompilerAndVersion = GetVisualStudioCompilerAndVersion()
-        if msvcCompilerAndVersion:
-            _, version = msvcCompilerAndVersion
-            print "version", version
-            if version >= MSVC_2017_COMPILER_VERSION:
-                generator = '-G "Visual Studio 15 2017 Win64"'
-            else:
-                generator = '-G "Visual Studio 14 2015 Win64"'
-    elif MacOS():
+    # building a 64-bit project. (Surely there is a better way to do this?)
+    # TODO: figure out exactly what "vcvarsall.bat x64" sets to force x64
+    if generator is None and Windows():
+        if IsVisualStudio2019OrGreater():
+            generator = "Visual Studio 16 2019"
+        elif IsVisualStudio2017OrGreater():
+            generator = "Visual Studio 15 2017 Win64"
+        else:
+            generator = "Visual Studio 14 2015 Win64"
+
+    elif generator is None and MacOS():
         generator = '-G Xcode'
     else:
         generator = '-G make'
+
+    if generator is not None:
+        generator = '-G "{gen}"'.format(gen=generator)
+
+    if IsVisualStudio2019OrGreater():
+        generator = generator + " -A x64"
+
+    numJobs = 4
 
     # On MacOS, enable the use of @rpath for relocatable builds.
     osx_rpath = None
@@ -482,9 +520,7 @@ def RunCMake(context, srcDir, buildDirRoot, instDir, force, config, extraArgs = 
                     extraArgs=(" ".join(extraArgs) if extraArgs else "")))
         Run("cmake --build . --config {config} --target install -- {multiproc}"
             .format(config=config,
-                    multiproc=("/M:{procs}" if Windows() else "-jobs {procs}")
-                               .format(procs=multiprocessing.cpu_count())))
-
+                    multiproc=FormatMultiProcs(numJobs, generator)))
 
 def RunB2(context, srcDir, buildDirRoot, instDir, force, config, b2_settings):
     with CurrentWorkingDirectory(srcDir):
