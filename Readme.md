@@ -46,7 +46,8 @@ The recipe system allows building on other platforms.
 
 clone this repo.
 
-Now type mkvfx, (or on windows: python mkvfx) and all will be revealed.
+
+Now type ```mkvfx```, (or on windows: python mkvfx) to get full instructions.
 
 You will see a message like -
 

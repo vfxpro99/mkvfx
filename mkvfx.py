@@ -47,13 +47,18 @@ import subprocess
 import sys
 import time
 import tarfile
-import urllib2
 import zipfile
+if (sys.version_info > (3, 0)):
+    import urllib.request
+    urllib2 = urllib.request
+else:
+    import urllib2
+    range = xrange
 
 from distutils.spawn import find_executable
 
 version = "0.3.0"
-print "mkvfx", version
+print("mkvfx", version)
 
 MSVC_2017_COMPILER_VERSION = 10
 MSVC_2017_TOOLSET = '14.1'
@@ -91,36 +96,36 @@ mkvfx_recipe_dir = os.path.join(sys.path[0], 'lib')
 
 def print_help():
     global package_recipes, build_platform
-    print "mkvfx knows how to build:"
+    print("mkvfx knows how to build:")
     for p in package_recipes:
         if "platforms" in package_recipes[p]:
             if build_platform in package_recipes[p]["platforms"]:
-                print ' ', package_recipes[p]['name']
+                print(' ', package_recipes[p]['name'])
         else:
-            print ' ', package_recipes[p]['name']
-    print "\nNote that git repos are shallow cloned.\n"
+            print(' ', package_recipes[p]['name'])
+    print("\nNote that git repos are shallow cloned.\n")
 
 # Helpers for printing output
 verbosity = 1
 
 def Print(msg):
     if verbosity > 0:
-        print msg
+        print(msg)
 
 def PrintStatus(status):
     if verbosity >= 1:
-        print "STATUS:", status
+        print("STATUS:", status)
 
 def PrintInfo(info):
     if verbosity >= 2:
-        print "INFO:", info
+        print("INFO:", info)
 
 def PrintCommandOutput(output):
     if verbosity >= 3:
         sys.stdout.write(output)
 
 def PrintError(error):
-    print "ERROR:", error
+    print("ERROR:", error)
 
 # Helpers for determining platform
 def Windows():
@@ -169,7 +174,7 @@ def DownloadURL(url, context, force):
             if os.path.exists(tmpFilename):
                 os.remove(tmpFilename)
 
-            for i in xrange(maxRetries):
+            for i in range(maxRetries):
                 try:
                     r = urllib2.urlopen(url)
                     with open(tmpFilename, "wb") as outfile:
@@ -263,20 +268,20 @@ def substitute_variables_array(context, str_array):
 
 
 def execTask(task, workingDir='.'):
-    print "Running", task
+    print("Running", task)
 
     restore_path = os.getcwd()
     status = 0 # assume success
     try:
         os.chdir(workingDir)
     except:
-        print "Could not change directory to", workingDir
+        print("Could not change directory to", workingDir)
         return 1
 
     try:
         status = subprocess.call(task, shell=True)
     except Exception as e:
-        print "Could not execute ", task, "\nbecause", e
+        print("Could not execute ", task, "\nbecause", e)
         status = 1
 
     os.chdir(restore_path)
@@ -284,29 +289,29 @@ def execTask(task, workingDir='.'):
 
 def create_directory(path):
     if verbosity:
-        print "Creating directory:", path
+        print("Creating directory:", path)
 
     exists = os.path.exists(path)
     if not os.path.isdir(path):
         if exists:
-            print "Path exists but is not directory", path
+            print("Path exists but is not directory", path)
             sys.exit(1)
 
         try:
             os.makedirs(path)
         except:
-            print "Could not create directory", path
+            print("Could not create directory", path)
             sys.exit(1)
 
 def validate_tool_chain():
     if build_platform == "windows":
         if not 'VisualStudioVersion' in os.environ:
-            print "Environment does not have Visual Studio environment variables\n"
-            print "Re-run after running VSVARS23.BAT\n"
-            print "If running Powershell, invoke PowerShell from a Visual Studio CMD prompt, using 'powershell'\n"
+            print("Environment does not have Visual Studio environment variables\n")
+            print("Re-run after running VSVARS23.BAT\n")
+            print("If running Powershell, invoke PowerShell from a Visual Studio CMD prompt, using 'powershell'\n")
             sys.exit(1)
 
-    print "Checking for tools\n"
+    print("Checking for tools\n")
     notFound = []
 
     if not find_executable("git"):
@@ -314,37 +319,37 @@ def validate_tool_chain():
         notFound.append("git")
 
     if Windows() and not find_executable("7z"):
-        print "MKVFX could not find 7zip, please install it and try again\n"
+        print("MKVFX could not find 7zip, please install it and try again\n")
         notFound.append("7z")
         #sys.exit(1)
 
     if not Windows() and not find_executable("make"):
-        print "MKVFX could not find make, please install it and try again\n"
+        print("MKVFX could not find make, please install it and try again\n")
         notFound.append("make")
         #sys.exit(1)
 
     if not find_executable("cmake"):
-        print "MKVFX could not find cmake, please install it and try again\n"
+        print("MKVFX could not find cmake, please install it and try again\n")
         notFound.append("cmake")
         #sys.exit(1)
 
     if Windows() and not find_executable("nasm"):
-        print "MKVFX could not find nasm, build steps requiring nasm will fail\n"
+        print("MKVFX could not find nasm, build steps requiring nasm will fail\n")
         notFound.append("nasm")
         #sys.exit(1)
 
     if not find_executable("premake5"):
-        print "MKVFX could not find premake5. Build steps requiring premake5 will fail.\n"
-        print "Premake is available from here: http://industriousone.com/premake/download\n"
+        print("MKVFX could not find premake5. Build steps requiring premake5 will fail.\n")
+        print("Premake is available from here: http://industriousone.com/premake/download\n")
         notFound.append("premake5")
         #sys.exit(1)
 
-    print "Validation complete"
+    print("Validation complete")
 
     if len(notFound) > 1:
-        print "Some tools", notFound, "were not found, some recipes may not run\n"
+        print("Some tools", notFound, "were not found, some recipes may not run\n")
     elif len(notFound) > 0:
-        print "One tool", notFound, "was not found, some recipes may not run\n"
+        print("One tool", notFound, "was not found, some recipes may not run\n")
 
 def create_directory_structure(root, src, build):
     create_directory(root)
@@ -411,7 +416,7 @@ def PatchFile(filename, patches):
 
 def Run(cmd):
     """Run the specified command in a subprocess."""
-    print 'Running "{cmd}"'.format(cmd=cmd)
+    print('Running "{cmd}"'.format(cmd=cmd))
     PrintInfo('Running "{cmd}"'.format(cmd=cmd))
 
     with open("log.txt", "a") as logfile:
@@ -466,12 +471,12 @@ def RunCMake(context, srcDir, buildDirRoot, instDir, force, config, extraArgs = 
     if not (config == 'Debug' or config == 'Release'):
         raise RuntimeError("config must be Debug or Release. Found {config}".format(config=config))
 
-    print "\n\ncmake\nsrcDir:", srcDir, "\nbuildDirRoot:", buildDirRoot, "\ninstDir:", instDir, "\n"
+    print("\n\ncmake\nsrcDir:", srcDir, "\nbuildDirRoot:", buildDirRoot, "\ninstDir:", instDir, "\n")
 
     context.current_configuration = config
     buildDir = ProjectBuildDir(buildDirRoot, force)
 
-    print "buildDir:", buildDir, "\n\n"
+    print("buildDir:", buildDir, "\n\n")
 
     generator = None
 
@@ -589,30 +594,30 @@ def buildDir(context, recipe, package, dir_name):
     if has_data(recipe, 'build_in'):
         build_dir = get_data(recipe, 'build_in')
     else:
-        print "YYY", "could not find build_in for ", package
+        print("YYY", "could not find build_in for ", package)
         build_dir = os.path.join(context.srcDir, dir_name)
-    print "XXX", build_dir 
+    print("XXX", build_dir)
     build_dir = substitute_variables(context, build_dir)
     exists = os.path.exists(build_dir)
     if not os.path.isdir(build_dir):
         if exists:
-            print "Build path", build_dir, "exists, but is not a directory"
+            print("Build path", build_dir, "exists, but is not a directory")
             sys.exit(1)
         try:
             os.makedirs(build_dir)
         except Exception as e:
             err = "Could not create build directory " + build_dir + "\nfor " + package_name + " because " + e
-            print err
+            print(err)
             raise RuntimeError(err)
     return build_dir
 
 def runRecipe(context, full_recipe, recipe, package_name, package, dir_name, execute):
     global mkvfx_root, build_platform, cwd
 
-    print "package:", package_name
+    print("package:", package_name)
     build_dir = buildDir(context, full_recipe, package, dir_name)
 
-    print "in directory:", build_dir
+    print("in directory:", build_dir)
  
     os.chdir(build_dir)
 
@@ -641,7 +646,7 @@ def runRecipe(context, full_recipe, recipe, package_name, package, dir_name, exe
         if execute:
             execTask(task, build_dir)
         else:
-            print "Simulating:", task
+            print("Simulating:", task)
 
         os.chdir(cwd)
 
@@ -651,13 +656,13 @@ def bake(context, package_name):
     global build_platform
     global lower_case_map
 
-    print "Baking", package_name
+    print("Baking", package_name)
     if (not option_force_build) and package_name in built_packages:
-        print package_name, "already built"
+        print(package_name, "already built")
         return
 
     if not package_name.lower() in lower_case_map:
-        print "Recipe for", package_name, "not found"
+        print("Recipe for", package_name, "not found")
         sys.exit(1)
 
     recipe = package_recipes[package_name.lower()]
@@ -666,18 +671,18 @@ def bake(context, package_name):
         for d in dependencies:
             bake(context, d)
 
-        print "Dependencies of", package_name, "baked, moving on the entree"
+        print("Dependencies of", package_name, "baked, moving on the entree")
 
     dir_name = get_data(recipe, 'dir')
     if dir_name == '':
-    	print 'No source dir specified for "', package_name, '" in recipe'
+        print('No source dir specified for "', package_name, '" in recipe')
         sys.exit(1)
 
     dir_name = substitute_variables(context, dir_name)
 
     repository = get_data(recipe, 'repository')
     if repository != '':
-        print "Fetching", package_name, "from", repository
+        print("Fetching", package_name, "from", repository)
         dir_path = context.srcDir + "/" + dir_name
 
         if option_do_fetch:
@@ -697,10 +702,10 @@ def bake(context, package_name):
                 elif type == "zip" or type == "curl-tgz":
                     dir_path = DownloadURL(url, context, False)
     else:
-        print "Repository not specified, nothing to fetch"
+        print("Repository not specified, nothing to fetch")
 
     if option_do_build:
-        print "Building recipe:", package_name
+        print("Building recipe:", package_name)
         if has_data(recipe, "build"):
             build_step = get_data(recipe, "build")
             build_system = None
@@ -740,14 +745,14 @@ def bake(context, package_name):
                     elif build_system == "b2":
                         RunB2(context, resolved_dir_path, build_dir, mkvfx_root, force, config, b2_args)
                 else:
-                    print build_system
+                    print(build_system)
         else:
             run_recipe = get_data(recipe, 'recipe')
             if len(run_recipe) > 0:
                 runRecipe(context, recipe, run_recipe, package_name, recipe, dir_name, option_do_build)
 
     if option_do_install:
-        print "Installing", package_name
+        print("Installing", package_name)
         run_install = get_data(recipe, 'install')
         if len(run_install) > 0:
             runRecipe(context, recipe, run_install, package_name, recipe, dir_name, option_do_install)
@@ -838,7 +843,7 @@ if Windows():
     platform_compiler = "vs2015"
 
 if build_platform == "":
-    print "Platform ", platform.system(), "not supported"
+    print("Platform ", platform.system(), "not supported")
     sys.exit(1)
 
 platform_recipe = "recipe_" + build_platform
@@ -854,20 +859,20 @@ recipe_path = sys.path[0] + '/lib/' + recipes_file
 try:
     recipe_file = open(recipe_path, 'r')
 except Exception as e:
-    print "Could not open", recipe_path, "because", e
+    print("Could not open", recipe_path, "because", e)
     sys.exit(1)
 
 try:
     data = recipe_file.read()
     recipe_file.close()
 except Exception as e:
-    print "Could not read", recipe_path, "because", e
+    print("Could not read", recipe_path, "because", e)
     sys.exit(0)
 
 try:
     json_data = json.loads(data)
 except Exception as e:
-    print "Could not parse json data because", e
+    print("Could not parse json data because", e)
     sys.exit(0)
 
 for package in json_data['packages']:
@@ -876,12 +881,12 @@ for package in json_data['packages']:
     package_recipes[name.lower()] = package
 
 if len(to_build) == 0:
-    print cl_parser.print_help()
+    print(cl_parser.print_help())
     print_help()
     sys.exit(0)
 
-print "Fetch %d Build %d Dependencies %d Install %d All %d" % (option_do_fetch, option_do_build, option_do_dependencies, option_do_install, option_build_all)
-print "Building:\n", to_build
+print("Fetch %d Build %d Dependencies %d Install %d All %d" % (option_do_fetch, option_do_build, option_do_dependencies, option_do_install, option_build_all))
+print("Building:\n", to_build)
 
 manifest_file_path = substitute_variables(context, '$(MKVFX_ROOT)/mkvfx-manifest.json')
 try:
@@ -903,4 +908,4 @@ manifest_file = open(manifest_file_path, 'w')
 manifest_file.write(json.dumps(built_packages, sort_keys=True))
 manifest_file.close()
 
-print 'MKVFX completed', time.ctime()
+print('MKVFX completed', time.ctime())
