@@ -95,23 +95,23 @@
 		},
 		{
 			"name": "boost",
-			"platforms": ["osx", "windows"],
+			"platforms": ["windows"],
 			"dir": "boost",
 			"notes": "building boost 1.60 for vs2014 compatibility, 1.57 is minimum for OSX, 1.55 is vfxplatform",
-			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_60_0",
+			"build_in": "$(MKVFX_SRC_ROOT)/boost/boost_1_70_0",
 			"dependencies": [ "boost-build-club" ],
 			"repository": {
-				"type": "curl-tgz",
-				"url": "http://downloads.sourceforge.net/sourceforge/boost/boost_1_60_0.tar.gz"
+				"type": "tgz",
+				"url": "https://downloads.sourceforge.net/project/boost/boost/1.70.0/boost_1_70_0.tar.gz"
 			},
 			"recipe": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\boost-build-club\\*\" \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost-build-club\\*\" \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_70_0\\\" /s /y",
 				"cmd.exe '/C build-win-shared.bat"
 			],
 			"install": [
-				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\stage\\lib\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
-				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_60_0\\boost\\*\" \"$(MKVFX_ROOT)\\include\\boost\\\" /s /y"
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_70_0\\stage\\lib\\*.lib\" \"$(MKVFX_ROOT)\\lib\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_70_0\\stage\\lib\\*.dll\" \"$(MKVFX_ROOT)\\bin\\\" /s /y",
+				"xcopy \"$(MKVFX_SRC_ROOT)\\boost\\boost_1_70_0\\boost\\*\" \"$(MKVFX_ROOT)\\include\\boost\\\" /s /y"
 			]
 		},
 		{
@@ -441,7 +441,7 @@
 			"notes": "A system include must be patched into CMakeFiles.txt for boost python",
 			"dir": "OpenEXR",
 			"build_in": "$(MKVFX_BUILD_ROOT)/PyIlmBase",
-			"dependencies": [ "IlmBase", "boost", "python" ],
+			"dependencies": [ "IlmBase", "boost" ],
 			"repository": {
 				"type": "git",
 				"url": "git://github.com/openexr/openexr.git"
@@ -451,24 +451,6 @@
 				"cmake --build . --config Release --target install"
 			],
 			"install_windows": []
-		},
-		{
-			"name": "python",
-			"platforms": ["osx"],
-			"dir": "python",
-			"build_in": "$(MKVFX_SRC_ROOT)/python/Python-2.7.3",
-			"dependencies": ["sqlite"],
-			"repository": {
-				"type": "curl-tgz",
-				"url": "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tar.bz2"
-			},
-			"recipe_osx": [
-				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install"
-			]
 		},
 		{
 			"name": "qt",
@@ -541,26 +523,6 @@
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\include\\*.h\" \"$(MKVFX_ROOT)\\include\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.lib\" \"$(MKVFX_ROOT)\\lib\" /s /y",
 				"xcopy \"$(MKVFX_BUILD_ROOT)\\sdl2\\Release\\*.dll\" \"$(MKVFX_ROOT)\\bin\" /s /y"
-			]
-		},
-		{
-			"name": "sqlite",
-			"platforms": ["osx"],
-			"dir": "sqlite",
-			"build_in": "$(MKVFX_SRC_ROOT)/sqlite/sqlite-autoconf-3070900",
-			"repository": {
-				"type": "curl-tgz",
-				"url": "http://www.sqlite.org/sqlite-autoconf-3070900.tar.gz"
-			},
-			"recipe_osx": [
-				"echo using sqlite from system SDK"
-			],
-			"recipe_linux": [
-				"./configure --disable-dependency-tracking --prefix=$(MKVFX_ROOT)",
-				"make -j 4"
-			],
-			"install_osx": [
-				"make install"
 			]
 		},
 		{

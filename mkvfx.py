@@ -176,9 +176,11 @@ def DownloadURL(url, context, force):
 
             for i in range(maxRetries):
                 try:
+                    PrintCommandOutput("Downloading {url}\n" .format(url=url))
                     r = urllib2.urlopen(url)
                     with open(tmpFilename, "wb") as outfile:
                         outfile.write(r.read())
+                    PrintCommandOutput("Download complete")
                     break
                 except Exception as e:
                     PrintCommandOutput("Retrying download due to error: {err}\n"
@@ -207,6 +209,7 @@ def DownloadURL(url, context, force):
 
             extractedPath = os.path.abspath(rootDir)
             if force and os.path.isdir(extractedPath):
+                print("Forcing removal of ", extractedPath)
                 shutil.rmtree(extractedPath)
 
             if os.path.isdir(extractedPath):
@@ -699,8 +702,8 @@ def bake(context, package_name):
                             branch = " --branch " + repository.branch + " "
                         cmd = "git -C " + platform_path(context.srcDir) + " clone --depth 1 " + branch + url + " " + dir_name
                     execTask(cmd)
-                elif type == "zip" or type == "curl-tgz":
-                    dir_path = DownloadURL(url, context, False)
+                elif type == "zip" or type =="tgz" or type == "curl-tgz":
+                    dir_path = DownloadURL(url, context, option_force_build)
     else:
         print("Repository not specified, nothing to fetch")
 
